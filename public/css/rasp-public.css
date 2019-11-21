@@ -1,0 +1,32 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+ body {
+   background-color: rgb(85, 253, 43);
+ }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-gap: 2px;
+    background-color: #2196F3;
+    padding: 2px;
+  }
+  
+  .grid-container > div {
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    vertical-align: center;
+    padding: 2px 0;
+    font-size: 12px;
+  }
+  
+  #before-grid{
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+
+  
