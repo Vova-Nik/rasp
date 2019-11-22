@@ -72,6 +72,8 @@
 		[61900,62000, '<a href="http://www.aa-odessa.ho.ua/raspisanieaaodessa/aavozrogdenie">Канатная 28 "Софиевская"</a>', '+38 0634941149 Владимир (Связист)',0]
 	];
 			
+
+
 //alert("rasp catched");
 var today = new Date();
 //var today = new Date('13 nov 2019 19:00:00');
@@ -178,9 +180,5 @@ while(true)
 		ii=0;
 		dd=0;
 	}
-	
 }
-
-
-
  })( jQuery );

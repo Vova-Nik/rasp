@@ -51,11 +51,35 @@ class Display
 				</div>
 				';
 
+		//	$replacement .=
+
+
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'rasp_rasp';
+			$charset_collate = $wpdb->get_charset_collate();
+	
+			//$sql = "CREATE TABLE $table_name () $charset_collate;";
+
+			// если не удалось подключиться, и нужно оборвать PHP с сообщением об этой ошибке
+			if (!empty($wpdb->error))
+				wp_die($wpdb->error);
+
+			// Готово, теперь используем функции класса wpdb
+			$results = $wpdb->get_results("SELECT * FROM $table_name");
+
+			//foreach($results as $key=>$record){
+				foreach($results as $record){
+				
+				$rasp_event = (string) json_encode($record);
+				error_log($rasp_event );
+			}
+
 
 			// $js_script__url = plugins_url('rasp.js', __FILE__);
 			$js_script__url  = plugin_dir_url(__FILE__) . '/js/rasp-public.js';
 			$js_script__url  = str_replace('/partials/', '', $js_script__url);
 			//error_log( $js_script__url  . ' in file ' . __FILE__ . __LINE__ );
+
 
 			$replacement .= '<script src="';
 			$replacement .= $js_script__url;
