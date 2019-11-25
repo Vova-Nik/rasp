@@ -49,6 +49,7 @@ class Rasp_Activator
 		  event_place varchar(512),
 		  event_description varchar(512),
 		  event_url varchar(512) DEFAULT '',
+		  event_to_show int DEFAULT 0,
 		--   sun bool DEFAULT FALSE,
 		--   mon bool DEFAULT FALSE,
 		--   tue bool DEFAULT FALSE,
@@ -107,9 +108,40 @@ class Rasp_Activator
 			),
 			array('%s', '%s', '%s', '%d')
 		);
-		//$record_id = $wpdb->insert_id;  //number of last record hb inserted to DB
-		//exit("Insertion " . $record_id);
-		//exit('1-st');
+
+		$wpdb->insert(
+			'wp_rasp_rasp',
+			array(
+				'event_name' => 'Meeting Sofi',   //s
+				'event_begin_time' => '19:00',	//s
+				'event_place' => 'Канатная 28', //s
+				'event_day_of_week' => '4' //d
+			),
+			array('%s', '%s', '%s', '%d')
+		);
+
+		$wpdb->insert(
+			'wp_rasp_rasp',
+			array(
+				'event_name' => 'Rassvet',   //s
+				'event_begin_time' => '12:00',	//s
+				'event_place' => 'Ступени', //s
+				'event_day_of_week' => '1' //d
+			),
+			array('%s', '%s', '%s', '%d')
+		);
+		
+			$wpdb->insert(
+				'wp_rasp_rasp',
+				array(
+					'event_name' => 'Rassvet',   //s
+					'event_begin_time' => '12:00',	//s
+					'event_place' => 'Ступени', //s
+					'event_day_of_week' => '6' //d
+				),
+				array('%s', '%s', '%s', '%d')
+		);
+
 	}
 
 	public function __toString()

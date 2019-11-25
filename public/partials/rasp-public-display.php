@@ -16,8 +16,6 @@
 //<!-- This file should primarily consist of HTML with a little bit of PHP. -->
 //<link rel="stylesheet" type="text/css" href="C:\openserver\ospanel\domains\raspwp\wp-content\plugins\rasp\public\css\rasp-public.css">
 
-
-
 //VVV
 
 class Display
@@ -27,14 +25,11 @@ class Display
 	public function display_rasp_table($the_content)
 	{
 
-		//add_action('wp_enqueue_scripts', 'insert_css');
-		//error_log("Display is running, congrats" . __FILE__ . '  ' . __LINE__);
-
 		if (strpos($the_content, 'RASP') !== false) {
 
 			$replacement =
 				'
-				<div id="before-grid">Сегодня</div>
+				<div class="before-grid">Сегодня</div>
 				<div class="grid-container">
 					<div id="item00">00</div>
 					<div id="item01">01</div>
@@ -51,40 +46,29 @@ class Display
 				</div>
 				';
 
-		//	$replacement .=
-
-
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'rasp_rasp';
 			$charset_collate = $wpdb->get_charset_collate();
-	
-			//$sql = "CREATE TABLE $table_name () $charset_collate;";
 
-			// если не удалось подключиться, и нужно оборвать PHP с сообщением об этой ошибке
+			// connection not sucessfull
 			if (!empty($wpdb->error))
 				wp_die($wpdb->error);
 
-			// Готово, теперь используем функции класса wpdb
+			// getting data from DB
 			$results = $wpdb->get_results("SELECT * FROM $table_name");
 
-			//foreach($results as $key=>$record){
-				foreach($results as $record){
-				
+			$replacement .= '<div id="event_data">';
+			foreach($results as $record){
 				$rasp_event = (string) json_encode($record);
-				error_log($rasp_event );
+				$replacement .= '<div class="event_data_element">';
+				$replacement .= $rasp_event;
+				$replacement .= '</div>';
 			}
 
+			$replacement .= '</div>';
 
-			// $js_script__url = plugins_url('rasp.js', __FILE__);
-			$js_script__url  = plugin_dir_url(__FILE__) . '/js/rasp-public.js';
-			$js_script__url  = str_replace('/partials/', '', $js_script__url);
-			//error_log( $js_script__url  . ' in file ' . __FILE__ . __LINE__ );
-
-
-			$replacement .= '<script src="';
-			$replacement .= $js_script__url;
-			$replacement .= '"></script>';
-
+			//DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+			//error_log($replacement);
 
 			$pattern = '/RASP/';
 			$the_content = preg_replace($pattern, $replacement, $the_content);
