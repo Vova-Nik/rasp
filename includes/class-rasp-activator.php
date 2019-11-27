@@ -68,7 +68,7 @@ class Rasp_Activator
 		$wpdb->insert(
 			'wp_rasp_rasp',
 			array(
-				'event_name' => 'Meeting Sofi',   //s
+				'event_name' => 'Meeting Sofi',
 				'event_begin_time' => '19:00',	//s
 				'event_place' => 'Канатная 28', //s
 				'event_day_of_week' => '0' //d
@@ -81,7 +81,7 @@ class Rasp_Activator
 			array(
 				'event_name' => 'Meeting Stupi',   //s
 				'event_begin_time' => '19:00',	//s
-				'event_place' => 'Канатная 28', //s
+				'event_place' => 'Ицхака Рабина 7', //s
 				'event_day_of_week' => '1' //d
 			),
 			array('%s', '%s', '%s', '%d')
@@ -90,8 +90,8 @@ class Rasp_Activator
 		$wpdb->insert(
 			'wp_rasp_rasp',
 			array(
-				'event_name' => 'Meeting Kot',   //s
-				'event_begin_time' => '19:00',	//s
+				'event_name' => "<a href='https://www.w3schools.com'>Meeting Kot</a>",
+				'event_begin_time' => '18:00',	//s
 				'event_place' => 'Канатная 28', //s
 				'event_day_of_week' => '3' //d
 			),
@@ -125,7 +125,7 @@ class Rasp_Activator
 			array(
 				'event_name' => 'Rassvet',   //s
 				'event_begin_time' => '12:00',	//s
-				'event_place' => 'Ступени', //s
+				'event_place' => 'Ицхака рабина 7 (РЦ Ступени 2 эт)', //s
 				'event_day_of_week' => '1' //d
 			),
 			array('%s', '%s', '%s', '%d')
@@ -136,7 +136,7 @@ class Rasp_Activator
 				array(
 					'event_name' => 'Rassvet',   //s
 					'event_begin_time' => '12:00',	//s
-					'event_place' => 'Ступени', //s
+					'event_place' => 'Ицхака рабина 7 (РЦ Ступени 2 эт)', //s
 					'event_day_of_week' => '6' //d
 				),
 				array('%s', '%s', '%s', '%d')

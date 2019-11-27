@@ -20,8 +20,6 @@
 
 class Display
 {
-
-
 	public function display_rasp_table($the_content)
 	{
 
@@ -56,19 +54,23 @@ class Display
 
 			// getting data from DB
 			$results = $wpdb->get_results("SELECT * FROM $table_name");
+			// foreach($results as $v){
+			// 	error_log( $v->event_name);
+			// }
+
+			//JSON_UNESCAPED_SLASHES (integer) Не экранировать /. Доступно с PHP 5.4.0.
+			//JSON_HEX_TAG (integer) Все < и > кодируются в \u003C и \u003E. Доступно с PHP 5.3.0.
 
 			$replacement .= '<div id="event_data">';
 			foreach($results as $record){
-				$rasp_event = (string) json_encode($record);
+				//$rasp_event = (string) json_encode($record, JSON_HEX_TAG );
 				$replacement .= '<div class="event_data_element">';
-				$replacement .= $rasp_event;
+				$replacement .= (string) json_encode($record, JSON_HEX_TAG );
 				$replacement .= '</div>';
 			}
 
 			$replacement .= '</div>';
 
-			//DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
-			//error_log($replacement);
 
 			$pattern = '/RASP/';
 			$the_content = preg_replace($pattern, $replacement, $the_content);
