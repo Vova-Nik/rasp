@@ -36,6 +36,17 @@ class Rasp_Activator
 	{
 		//  exit("Activate in" . "\rasp\includes\class-rasp-activator.php");
 		//create_table();
+		// require_once(ABSPATH . 'wp-content\plugins\rasp\admin\partials\rasp-admin-display.php'); // C:\openserver\ospanel\domains\raspwp\wp-content\plugins\rasp\admin\partials\rasp-admin-display.php
+		// add_action('rest_api_init', function () {
+		// 	//register_rest_route('rasp/v1', '/author/(?P<id>\d+)', array(
+		// 	register_rest_route('rasp/v1', '/author/', array(
+		// 		'methods' => 'GET',
+		// 		'callback' => 'rasp_get_data',
+		// 	));
+		// });
+
+		//http://raspwp/wp-json/rasp/v1/author/(?P\d+).
+
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'rasp_rasp';
 		$charset_collate = $wpdb->get_charset_collate();
@@ -50,13 +61,6 @@ class Rasp_Activator
 		  event_description varchar(512),
 		  event_url varchar(512) DEFAULT '',
 		  event_to_show int DEFAULT 0,
-		--   sun bool DEFAULT FALSE,
-		--   mon bool DEFAULT FALSE,
-		--   tue bool DEFAULT FALSE,
-		--   wed bool DEFAULT FALSE,
-		--   thu bool DEFAULT FALSE,
-		--   fry bool DEFAULT FALSE,
-		--   sat bool DEFAULT FALSE,
 		  event_category int DEFAULT 0,
 		  event_show bool DEFAULT 1,
 		  PRIMARY KEY  (id)
@@ -64,7 +68,7 @@ class Rasp_Activator
 
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		dbDelta($sql);
-				
+
 		$wpdb->insert(
 			'wp_rasp_rasp',
 			array(
@@ -130,22 +134,21 @@ class Rasp_Activator
 			),
 			array('%s', '%s', '%s', '%d')
 		);
-		
-			$wpdb->insert(
-				'wp_rasp_rasp',
-				array(
-					'event_name' => 'Rassvet',   //s
-					'event_begin_time' => '12:00',	//s
-					'event_place' => 'Ицхака рабина 7 (РЦ Ступени 2 эт)', //s
-					'event_day_of_week' => '6' //d
-				),
-				array('%s', '%s', '%s', '%d')
-		);
 
+		$wpdb->insert(
+			'wp_rasp_rasp',
+			array(
+				'event_name' => 'Rassvet',   //s
+				'event_begin_time' => '12:00',	//s
+				'event_place' => 'Ицхака рабина 7 (РЦ Ступени 2 эт)', //s
+				'event_day_of_week' => '6' //d
+			),
+			array('%s', '%s', '%s', '%d')
+		);
 	}
 
 	public function __toString()
 	{
-			return 'class Rasp_Activator';
+		return 'class Rasp_Activator';
 	}
 }

@@ -48,15 +48,10 @@ class Display
 			$table_name = $wpdb->prefix . 'rasp_rasp';
 			$charset_collate = $wpdb->get_charset_collate();
 
-			// connection not sucessfull
 			if (!empty($wpdb->error))
 				wp_die($wpdb->error);
 
-			// getting data from DB
 			$results = $wpdb->get_results("SELECT * FROM $table_name");
-			// foreach($results as $v){
-			// 	error_log( $v->event_name);
-			// }
 
 			//JSON_UNESCAPED_SLASHES (integer) Не экранировать /. Доступно с PHP 5.4.0.
 			//JSON_HEX_TAG (integer) Все < и > кодируются в \u003C и \u003E. Доступно с PHP 5.3.0.

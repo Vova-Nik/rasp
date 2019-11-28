@@ -19,8 +19,15 @@
  * @package    Rasp
  * @subpackage Rasp/admin
  * @author     Volodymyr Nikolenko < vmaseich@gmail.com>
+ * 
+ * 
  */
-class Rasp_Admin {
+//include plugin_dir_path(dirname(__FILE__)) . '/admin/partials/rasp-admin-display.php';
+//require_once plugin_dir_path(dirname(__FILE__)) . '/admin/partials/rasp-admin-display.php';
+
+
+class Rasp_Admin
+{
 
 	/**
 	 * The ID of this plugin.
@@ -53,18 +60,28 @@ class Rasp_Admin {
 	 * rasp menu in plugins settings creation
 
 	 */
-	public function __construct( $plugin_name, $version ) {
 
+	public function __construct($plugin_name, $version)
+	{
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		add_action("admin_menu", array($this,"options_page"));
+		add_action("admin_menu", array($this, "options_page"));
+
+		add_action('rest_api_init', function () {
+			register_rest_route('rasp/v1', '/rasp', 
+			array(
+				'methods' => 'POST',
+				'callback' => 'rasp_restAPI_point',
+				'args' => array(),
+			));
+		});
 	}
 
 	/**VVV
 	 * rasp menu in plugins settings creation
-
 	 */
-	public function options_page(){
+	public function options_page()
+	{
 		add_options_page(
 			"rasp config",
 			"rasp",
@@ -72,14 +89,16 @@ class Rasp_Admin {
 			"rasp-options",
 			array($this, 'render')
 		);
-		
-	/**VVV
-	 * page of plugin settings
 
-	 */
+		/**VVV
+		 * page of plugin settings
+
+		 */
 	}
-		public function render(){
-		require plugin_dir_path(dirname(__FILE__)) . '/admin/partials/rasp-admin-display.php';
+	public function render()
+	{
+		//require_once plugin_dir_path(dirname(__FILE__)) . '/admin/partials/rasp-admin-display.php';
+		display_frame();
 	}
 
 	/**
@@ -87,7 +106,8 @@ class Rasp_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -101,8 +121,7 @@ class Rasp_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/rasp-admin.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/rasp-admin.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -110,7 +129,8 @@ class Rasp_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -124,13 +144,14 @@ class Rasp_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/rasp-admin.js', array( 'jquery' ), $this->version, false );
-
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/rasp-admin.js', array('jquery'), $this->version, false);
 	}
 
 	public function __toString()
 	{
-			return 'class Rasp_Admin';
+		return 'class Rasp_Admin';
 	}
+	//require_once plugin_dir_path(dirname(__FILE__)) . '/admin/partials/rasp-admin-display.php';	
 
 }
+require_once plugin_dir_path(dirname(__FILE__)) . '/admin/partials/rasp-admin-display.php';

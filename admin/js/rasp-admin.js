@@ -44,7 +44,7 @@
 	
 	////////////////////////////////////////////////////
 
-	console.log("rasp script working");
+	console.log("rasp script working!");
 	var tableRow = {
 	  'ind': 'ind 1',
 	  'day': 'day 1',
@@ -91,43 +91,56 @@
 	
 	$(".admin-grid-container").append(lastRow);
 
-
-
+	console.log('FFFetch is here');
 	}
 
+	read_from_db();
+	//save_to_db();
 
+	function save_to_db(){
+		fetch('http://raspwp/wp-json/rasp/v1/rasp', { 
+			method: 'post', 
+			headers: {'Content-Type': 'application/json' },
+			body: JSON.stringify({ name: 1, b: 2})
+		})
+		.then(  
+		  function(response) {  
+			if (response.status !== 200) {  
+			  console.log('Looks like there was a problem. Status Code: ' +  response.status);  
+			  return;  
+			}
+	   		response.json().then(function(data) {  
+			  console.log(data);  
+			});  
+		  }  
+		)  
+		.catch(function(err) {  
+		  console.log('Fetch Error :-S', err);  
+		});
+	}
 
-
-	 	// /public/class-rasp-db_getter.php
-	//console.log(window.location.href);
-
-	// const rasp_events_url = window.location.href + 'wp-content\/plugins\/rasp\/public\/class-rasp-db-request.php'
-
-	// console.log(rasp_events_url);
-
-	// //fetch('http://raspwp/wp-content/plugins/rasp/public/class-rasp-db-request.php')  
-
-	// fetch('http://raspwp/wp-content/plugins/rasp/includes/class-vvv-import-db.php', { 
-	// 	method: 'POST', 
-	// 	headers: {'Content-Type': 'application/json' },
-	// 	body: JSON.stringify({ name: 1, b: 2})
-	// })
-
-	// .then(  
-	//   function(response) {  
-	// 	if (response.status !== 200) {  
-	// 	  console.log('Looks like there was a problem. Status Code: ' +  response.status);  
-	// 	  return;  
-	// 	}
-
-	// 	response.json().then(function(data) {  
-	// 	  console.log(data);  
-	// 	});  
-	//   }  
-	// )  
-	// .catch(function(err) {  
-	//   console.log('Fetch Error :-S', err);  
-	// });
-
+	function read_from_db(){
+		fetch('http://raspwp/wp-json/rasp/v1/rasp', { 
+			method: 'post', 
+			headers: {'Content-Type': 'application/json' },
+			body: JSON.stringify({ name: 'Vovchik', b: 2})
+		})
+	
+		.then(  
+		  function(response) {  
+			if (response.status !== 200) {  
+			  console.log('Looks like there was a problem. Status Code: ' +  response.status);  
+			  return;  
+			}
+	
+			response.json().then(function(data) {  
+			  console.log(data);  
+			});  
+		  }  
+		)  
+		.catch(function(err) {  
+		  console.log('Fetch Error :-S', err);  
+		});
+		}
 
 })( jQuery );

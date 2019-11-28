@@ -20,7 +20,6 @@
 			events_list_array[i] = JSON.parse(events_list[i].textContent);
 			console.log(events_list_array[i]);
 		}
-		//debugger;
 		events_list = null;
 		/**------------------------------------------------------- */
 
@@ -43,7 +42,6 @@
 		});
 		console.log(event_class_array);
 
-		//	debugger;
 		/*---------------------------------------------------------------------------------------------------*/
 		event_class_array.sort(arr_compare);
 
@@ -59,8 +57,6 @@
 		//event_class_arrayy.sort(arr_comp);
 		//console.log(events_list_array);
 		/*-----------------------------------------------------------------------------------------------------*/
-
-
 		// var aa = today.getDate() + '.0' + (today.getMonth() + 1) + '.' + today.getFullYear();
 		// if (today.getMonth() >= 9)
 		let current_full_date = today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear();
