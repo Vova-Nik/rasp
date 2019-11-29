@@ -38,9 +38,13 @@
 	$("a").click(function () {
 		alert("Hello world!");
 	});
+
+
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 
-	function rasp_ready() {
+	async function rasp_ready() {
+
+
 
 		/*
 			console.log("rasp script working!");
@@ -93,60 +97,57 @@
 		}
 		*/
 
-		let fetch_param = new Object();
-		fetch_param.action = 'read';
-		fetch_param.name = 'Nikolas';
-		//console.log(JSON.stringify(fetch_param));
-		//save_to_db();
-		read_from_db();
-	
-	function save_to_db() {
-		fetch('http://raspwp/wp-json/rasp/v1/rasp', {
-			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ name: 1, b: 2 })
-		})
-			.then(
-				function (response) {
-					if (response.status !== 200) {
-						console.log('Looks like there was a problem. Status Code: ' + response.status);
-						return;
-					}
-					response.json().then(function (data) {
-						console.log(data);
-					});
-				}
-			)
-			.catch(function (err) {
-				console.log('Fetch Error :-S', err);
-			});
-	}
-	//body: JSON.stringify({ name: 'Vovchik', b: 2 })
+		// let fetch_param = new Object();
+		// fetch_param.action = 'read';
+		// fetch_param.name = 'Nikolas';
 
-	function read_from_db() {
-		fetch('http://raspwp/wp-json/rasp/v1/rasp', {
-			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({action: 'read'})
-		})
-			.then(
-				function (response) {
-					if (response.status !== 200) {
-						console.log('Looks like there was a problem. Status Code: ' + response.status);
-						return;
-					}
-					response.json().then(function (resp) {
-						//debugger;
-						console.log(resp);
-					
-						//console.log(data[0][event_begin_time]);
-					});
-				}
-			)
-			.catch(function (err) {
-				console.log('Fetch Error :-S', err);
-			});
+		// async function getUser(id){
+		// 	console.log('user processing');
+		// 	let response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
+		// 	let data = await response.json();
+		// 	return data;
+		// }
+
+		// let user = await getUser(1)
+		// console.log(user);
+
+		let rasp = await read_from_db();
+
+		rasp = JSON.parse(rasp);
+		$('body').append(`<div>${rasp}</div>`);
+
+		let save_res = await save_to_db();
+		console.log(save_res);
+
+		$(".admin-grid-container").append(`
+			<div  class="admin-grid-container-div-th">Id</div>
+			<div  class="admin-grid-container-div-th">Day</div>
+			<div  class="admin-grid-container-div-th">Time</div>
+			<div  class="admin-grid-container-div-th">Place</div>
+			<div  class="admin-grid-container-div-th">Description</div>
+			<div  class="admin-grid-container-div-th">Display</div>
+			`);  //Header of table
+
+		rasp.forEach(function (item, i) {
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.id}</div>`);
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_day_of_week} </div>`);
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_begin_time} </div>`);
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_place} </div>`);
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_name} </div>`);
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_show} </div>`);
+		});
+	} // end of main()
+
+	async function save_to_db() {
+		let response = await fetch('http://raspwp/wp-json/rasp/v1/rasp', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'save', name: 1, b: 2 }) });
+		let rasp = await response.json();
+		return rasp;
 	}
-}
+
+	async function read_from_db() {
+		let response = await fetch('http://raspwp/wp-json/rasp/v1/rasp', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
+		let rasp = await response.json();
+		return rasp;
+	}
 
 })(jQuery);
