@@ -60,7 +60,6 @@ class Rasp_Activator
 		  event_place varchar(512),
 		  event_description varchar(512),
 		  event_url varchar(512) DEFAULT '',
-		  event_to_show int DEFAULT 0,
 		  event_category int DEFAULT 0,
 		  event_show bool DEFAULT 1,
 		  PRIMARY KEY  (id)

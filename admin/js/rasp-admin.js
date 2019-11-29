@@ -1,4 +1,4 @@
-(function( $ ) {
+(function ($) {
 	'use strict';
 
 	/**
@@ -29,118 +29,124 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-	
+
 
 	function admdel(ind) {
-	  console.log("admdel= " + ind);
+		console.log("admdel= " + ind);
 	}
-	
+
 	$("a").click(function () {
-	  alert("Hello world!");
+		alert("Hello world!");
 	});
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 
 	function rasp_ready() {
+
+		/*
+			console.log("rasp script working!");
+			var tableRow = {
+				'ind': 'ind 1',
+				'day': 'day 1',
+				'begtime': 'begtime 1',
+				'place': 'place 1',
+				'contact': 'contact 1',
+				'repeat': 'repeat 1',
+				'serv': 'serv 1'
+			};
 	
-	////////////////////////////////////////////////////
-
-	console.log("rasp script working!");
-	var tableRow = {
-	  'ind': 'ind 1',
-	  'day': 'day 1',
-	  'begtime': 'begtime 1',
-	  'place': 'place 1',
-	  'contact': 'contact 1',
-	  'repeat': 'repeat 1',
-	  'serv': 'serv 1'
-	};
-	
-	var table = new Array(8);
-	for (var i = 0; i < table.length; i++) {
-	  table[i] = new Array(7);
-	}
-	table[0] = tableRow;
-	table[1].ind = 1; table[1].day = "monday"; table[1].begtime = "19:00"; table[1].place = "Sofi"; table[1].contact = "And";
-	table[2].ind = 2; table[2].day = "monday"; table[2].begtime = "9:00"; table[2].place = "Sofi"; table[2].contact = "And";
-	table[3].ind = 3; table[3].day = "monday"; table[3].begtime = "9:00"; table[3].place = "Sofi"; table[3].contact = "And";
-	table[4].ind = 4; table[4].day = "monday"; table[4].begtime = "9:00"; table[4].place = "Sofi"; table[4].contact = "And";
-	table[5].ind = 5; table[5].day = "monday"; table[5].begtime = "9:00"; table[5].place = "Sofi"; table[5].contact = "And";
-	table[6].ind = 6; table[6].day = "monday"; table[6].begtime = "9:00"; table[6].place = "Sofi"; table[6].contact = "And"; table[6].repeat = "week"; table[6].serv = 'serv';
-	
-	console.log(table);
-
-	$(".admin-grid-container").append('<div  class="admin-grid-container-div-th">Id</div><div  class="admin-grid-container-div-th">Day</div><div  class="admin-grid-container-div-th">Time</div><div  class="admin-grid-container-div-th">Place</div><div  class="admin-grid-container-div-th">Contact</div><div  class="admin-grid-container-div-th">Action</div>');  //Header of table
-
-	table.forEach(function (item, i) {
-	  $(".admin-grid-container").append('<div class="admin-grid-container-div">' + table[i].ind + '</div>');
-	  $(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].day + '</div>');
-	  $(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].begtime + '</div>');
-	  $(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].place + '</div>');
-	  $(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].contact + '</div>');
-	  $(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].repeat + '</div>');
-	});
-	
-	var lastRow = `
-	<div class="admin-grid-container-div-ed">Id-</div>
-	<div class="admin-grid-container-div-ed">Day-</div>
-	<div class="admin-grid-container-div-ed">Time-</div>
-	<div class="admin-grid-container-div-ed">Place-</div>
-	<div class="admin-grid-container-div-ed">Contact=</div>
-	<div class="admin-grid-container-div-ed">Action-</div>
-	`;
-	
-	$(".admin-grid-container").append(lastRow);
-
-	console.log('FFFetch is here');
-	}
-
-	read_from_db();
-	//save_to_db();
-
-	function save_to_db(){
-		fetch('http://raspwp/wp-json/rasp/v1/rasp', { 
-			method: 'post', 
-			headers: {'Content-Type': 'application/json' },
-			body: JSON.stringify({ name: 1, b: 2})
-		})
-		.then(  
-		  function(response) {  
-			if (response.status !== 200) {  
-			  console.log('Looks like there was a problem. Status Code: ' +  response.status);  
-			  return;  
+			var table = new Array(8);
+			for (var i = 0; i < table.length; i++) {
+				table[i] = new Array(7);
 			}
-	   		response.json().then(function(data) {  
-			  console.log(data);  
-			});  
-		  }  
-		)  
-		.catch(function(err) {  
-		  console.log('Fetch Error :-S', err);  
-		});
-	}
-
-	function read_from_db(){
-		fetch('http://raspwp/wp-json/rasp/v1/rasp', { 
-			method: 'post', 
-			headers: {'Content-Type': 'application/json' },
-			body: JSON.stringify({ name: 'Vovchik', b: 2})
-		})
+			table[0] = tableRow;
+			table[1].ind = 1; table[1].day = "monday"; table[1].begtime = "19:00"; table[1].place = "Sofi"; table[1].contact = "And";
+			table[2].ind = 2; table[2].day = "monday"; table[2].begtime = "9:00"; table[2].place = "Sofi"; table[2].contact = "And";
+			table[3].ind = 3; table[3].day = "monday"; table[3].begtime = "9:00"; table[3].place = "Sofi"; table[3].contact = "And";
+			table[4].ind = 4; table[4].day = "monday"; table[4].begtime = "9:00"; table[4].place = "Sofi"; table[4].contact = "And";
+			table[5].ind = 5; table[5].day = "monday"; table[5].begtime = "9:00"; table[5].place = "Sofi"; table[5].contact = "And";
+			table[6].ind = 6; table[6].day = "monday"; table[6].begtime = "9:00"; table[6].place = "Sofi"; table[6].contact = "And"; table[6].repeat = "week"; table[6].serv = 'serv';
 	
-		.then(  
-		  function(response) {  
-			if (response.status !== 200) {  
-			  console.log('Looks like there was a problem. Status Code: ' +  response.status);  
-			  return;  
-			}
+			console.log(table);
 	
-			response.json().then(function(data) {  
-			  console.log(data);  
-			});  
-		  }  
-		)  
-		.catch(function(err) {  
-		  console.log('Fetch Error :-S', err);  
-		});
+			$(".admin-grid-container").append('<div  class="admin-grid-container-div-th">Id</div><div  class="admin-grid-container-div-th">Day</div><div  class="admin-grid-container-div-th">Time</div><div  class="admin-grid-container-div-th">Place</div><div  class="admin-grid-container-div-th">Contact</div><div  class="admin-grid-container-div-th">Action</div>');  //Header of table
+	
+			table.forEach(function (item, i) {
+				$(".admin-grid-container").append('<div class="admin-grid-container-div">' + table[i].ind + '</div>');
+				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].day + '</div>');
+				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].begtime + '</div>');
+				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].place + '</div>');
+				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].contact + '</div>');
+				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].repeat + '</div>');
+			});
+	
+			var lastRow = `
+		<div class="admin-grid-container-div-ed">Id-</div>
+		<div class="admin-grid-container-div-ed">Day-</div>
+		<div class="admin-grid-container-div-ed">Time-</div>
+		<div class="admin-grid-container-div-ed">Place-</div>
+		<div class="admin-grid-container-div-ed">Contact=</div>
+		<div class="admin-grid-container-div-ed">Action-</div>
+		`;
+	
+			$(".admin-grid-container").append(lastRow);
+	
 		}
+		*/
 
-})( jQuery );
+		let fetch_param = new Object();
+		fetch_param.action = 'read';
+		fetch_param.name = 'Nikolas';
+		//console.log(JSON.stringify(fetch_param));
+		//save_to_db();
+		read_from_db();
+	
+	function save_to_db() {
+		fetch('http://raspwp/wp-json/rasp/v1/rasp', {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ name: 1, b: 2 })
+		})
+			.then(
+				function (response) {
+					if (response.status !== 200) {
+						console.log('Looks like there was a problem. Status Code: ' + response.status);
+						return;
+					}
+					response.json().then(function (data) {
+						console.log(data);
+					});
+				}
+			)
+			.catch(function (err) {
+				console.log('Fetch Error :-S', err);
+			});
+	}
+	//body: JSON.stringify({ name: 'Vovchik', b: 2 })
+
+	function read_from_db() {
+		fetch('http://raspwp/wp-json/rasp/v1/rasp', {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({action: 'read'})
+		})
+			.then(
+				function (response) {
+					if (response.status !== 200) {
+						console.log('Looks like there was a problem. Status Code: ' + response.status);
+						return;
+					}
+					response.json().then(function (resp) {
+						//debugger;
+						console.log(resp);
+					
+						//console.log(data[0][event_begin_time]);
+					});
+				}
+			)
+			.catch(function (err) {
+				console.log('Fetch Error :-S', err);
+			});
+	}
+}
+
+})(jQuery);

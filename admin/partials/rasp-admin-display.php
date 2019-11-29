@@ -41,9 +41,39 @@ function rasp_restAPI_point(WP_REST_Request $request)
 	if (!empty($wpdb->error))
 		wp_die($wpdb->error);
 	//$ans = $args[0];
-	$param = $request['name'];
-	error_log($param . 'vvv');
-	return  $param;
+	$action = $request['action'];
+	error_log('Request = ' . $request['action']);
+
+	if($action == 'read')
+		return  read_rasp_DB();
+	if($action == 'save')
+		return  save_rasp_DB();
+}
+function save_rasp_DB()
+{
+	return 'save_rasp_DB() patch';
+}
+
+function read_rasp_DB()
+{
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'rasp_rasp';
+	$charset_collate = $wpdb->get_charset_collate();
+	if (!empty($wpdb->error))
+		wp_die($wpdb->error);
+
+	$results = $wpdb->get_results("SELECT * FROM $table_name");
+	$to_page = '';
+	foreach ($results as $record) {
+		$to_page .= (string) json_encode($record, JSON_HEX_TAG);
+	}
+	//JSON_UNESCAPED_SLASHES (integer) Не экранировать /. Доступно с PHP 5.4.0.
+	//JSON_HEX_TAG (integer) Все < и > кодируются в \u003C и \u003E. Доступно с PHP 5.3.0.
+	//$to_page = (string) json_encode($results, JSON_HEX_TAG); //$results
+	error_log($to_page);
+	return  $to_page;
+
+	//return  'vvv';
 }
 
 // function rasp_restAPI_point()
