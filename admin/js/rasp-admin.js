@@ -124,7 +124,7 @@
 			<div  class="admin-grid-container-div-th">Day</div>
 			<div  class="admin-grid-container-div-th">Time</div>
 			<div  class="admin-grid-container-div-th">Place</div>
-			<div  class="admin-grid-container-div-th">Description</div>
+			<div  class="admin-grid-container-div-th">Name</div>
 			<div  class="admin-grid-container-div-th">Display</div>
 			`);  //Header of table
 
@@ -136,6 +136,19 @@
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_name} </div>`);
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_show} </div>`);
 		});
+
+
+		$(".admin-grid-container-div").dblclick(function (element) {
+			element.srcElement.classList.forEach(cl => {
+				if (cl.indexOf('agcd-row') > -1) {
+					cl = parseInt(cl.substring(8));
+					//console.log(rasp[cl]);
+					edit_window(rasp[cl]);
+				}
+			});
+
+		});
+
 	} // end of main()
 
 	async function save_to_db() {
@@ -148,6 +161,38 @@
 		let response = await fetch('http://raspwp/wp-json/rasp/v1/rasp', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
 		let rasp = await response.json();
 		return rasp;
+	}
+
+	function edit_window(event_to_edit) {
+
+		//let newWin = window.open("about:blank", "hello", "width=200"); //dependent
+		//newWin.document.write(`${event_to_edit.id}  ${event_to_edit.event_name}`);
+
+		let windowObjectReference = window.open(
+			"",
+			"Edit Event",
+			"width=220,height=230,resizable,scrollbars=yes,status=1,dialog=yes,minimizable=yes,dependent=yes,width=300,height=400"
+		  );
+
+		//   "alwaysRaised=yes,dialog=yes,minimizable=yes,dependent=yes,directories=no,hotkeys=no," +
+		//   "location=no,menubar=no,personalbar=no,resizable=yes,scrollbars=yes," +
+		//   "status=no,titlebar=yes,toolbar=no,width=300,height=400,left=100,top=100"
+
+		//newWin.document.write(`${event_to_edit.id} \n ${event_to_edit.item.event_begin_time} \n  ${event_to_edit.item.event_place} \n  ${event_to_edit.item.event_name}`);
+		/*
+		event_begin_time: "19:00:00"
+		event_category: "0"
+		event_day_of_week: "2"
+		event_description: null
+		event_end_time: null
+		event_name: "Meeting Sofi"
+		event_place: "Канатная 28"
+		event_show: "1"
+		event_url: ""
+		id: "4"
+		*/
+
+
 	}
 
 })(jQuery);
