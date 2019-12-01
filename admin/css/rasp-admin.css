@@ -4,92 +4,63 @@
  */
  /* whole table */
 
- .edit-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-
-  /* background-color: violet; */
-  /* height: 100%; */
-}
-
-.edit-area {
-   position: absolute;
-  left: 50%;
-  margin-left: -23%;
-  margin-right: 160px;
-  top: 4px;
-  width: 46%;
-  height: auto;
-  background-color: #5a87f0;
-  opacity: 1;
-  border: 4px solid black;
-  border-radius: 8px;
-  -webkit-box-shadow: 5px 5px 5px 0px #0F0699; 
-  box-shadow: 5px 5px 5px 0px #0F0699;
-  color: black;
-  padding: 20px;
-  z-index: 2;
-  }
-  .edit-area > div
-  {
-    opacity: 0.5;
-    background-color: white;
-    width: 20%;
-    margin: 8px;
-    padding: 20px;
-   }
-
-   .edit-area > form
-   {
-     opacity: 1;
-     background-color: rgb(90, 123, 233);
-     /* margin: 18px;
-     display: flex; */
-   }
 /* ------------------------------------------------------------------------- */
  .admin-grid-container {
     display: grid;
-    grid-template-columns: 3em 5em 8em auto auto 12%;
-    /* grid-gap: 2px; */
-    background-color: #3f3fe7;
-    padding: 1px;
+    grid-template-columns: 5em 3em 3em 8em auto auto 5em 3em;
+    grid-gap: 2px;
+    background-color: #f5f5f841;
+    padding: 2px;
     margin: 1em;
   }
   
   .admin-grid-container-div-th  {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(17, 173, 245, 0.123);
     text-align: center;
     vertical-align: center;
     padding-left:10px;
     padding-right:10px;
-    font-size: 14px;
-    /* padding-bottom: 4px; */
-    /* border: 1px; */
+    margin: 2px;
   }
   
   .admin-grid-container-div {
-    background-color: rgba(255, 255, 255, 0.99);
+    background-color: rgb(255, 255, 255);
     text-align: center;
     vertical-align: center;
-    margin: 1px;
-    /* padding: 8px 0; */
-    font-size: 12px;
+    margin: 2px;
   }
   
   .admin-grid-container-div-ed  {
-    background-color: rgba(220, 200, 189, 0.95);
+    background-color: white;
     text-align: left;
     vertical-align: center;
     padding-left:10px;
     padding-right:10px;
-    font-size: 16px;
-    border: 1px;
+    margin: 2px;
   }
   
-  
-  .adm-button
+.btn_copy{
+  background-color: rgb(113, 250, 227);
+  text-align: center;
+  font-weight: bold;
+}
+.btn_copy:hover{
+  background-color: rgb(117, 250, 28);
+  cursor: pointer;
+}
+
+.btn_del{
+  background-color: rgb(246, 202, 131);
+  text-align: center;
+  font-weight: bold;
+}
+.btn_del:hover{
+  background-color: rgb(245, 52, 52);
+  cursor: pointer;
+
+}
+
+ .adm-button
   {
       text-align: center;
       display: inline;
@@ -105,73 +76,4 @@
 
 
   /* ***************************  Form ******************************************/
-  .flex-outer,
-.flex-inner {
-  list-style-type: none;
-  padding: 0;
-}
-
-.flex-outer {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.flex-outer li,
-.flex-inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.flex-inner {
-  padding: 0 8px;
-  justify-content: space-between;  
-}
-
-.flex-outer > li:not(:last-child) {
-  margin-bottom: 20px;
-}
-
-.flex-outer li label,
-.flex-outer li p {
-  padding: 8px;
-  font-weight: 300;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-}
-
-.flex-outer > li > label,
-.flex-outer li p {
-  flex: 1 0 120px;
-  max-width: 220px;
-}
-
-.flex-outer > li > label + *,
-.flex-inner {
-  flex: 1 0 220px;
-}
-
-.flex-outer li p {
-  margin: 0;
-}
-
-.flex-outer li input:not([type='checkbox']),
-.flex-outer li textarea {
-  padding: 15px;
-  border: none;
-}
-
-.flex-outer li button {
-  margin-left: auto;
-  padding: 8px 16px;
-  border: none;
-  background: #333;
-  color: #f2f2f2;
-  text-transform: uppercase;
-  letter-spacing: .09em;
-  border-radius: 2px;
-}
-
-.flex-inner li {
-  width: 100px;
-}
+ 
