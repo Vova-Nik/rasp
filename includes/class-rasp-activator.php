@@ -93,12 +93,13 @@ class Rasp_Activator
 		$wpdb->insert(
 			'wp_rasp_rasp',
 			array(
-				'event_name' => "<a href='https://www.w3schools.com'>Meeting Kot</a>",
+				'event_name' => "Meeting PosKOt",
 				'event_begin_time' => '18:00',	//s
 				'event_place' => 'Канатная 28', //s
-				'event_day_of_week' => '3' //d
+				'event_day_of_week' => '3', //d
+				'event_url' => "https://www.w3schools.com"
 			),
-			array('%s', '%s', '%s', '%d')
+			array('%s', '%s', '%s', '%d', '%s')
 		);
 
 		$wpdb->insert(
@@ -107,9 +108,10 @@ class Rasp_Activator
 				'event_name' => 'Meeting Sofi',   //s
 				'event_begin_time' => '19:00',	//s
 				'event_place' => 'Канатная 28', //s
-				'event_day_of_week' => '2' //d
+				'event_day_of_week' => '2', //d
+				'event_url' => "https://www.w3schools.com" //s
 			),
-			array('%s', '%s', '%s', '%d')
+			array('%s', '%s', '%s', '%d', '%s')
 		);
 
 		$wpdb->insert(

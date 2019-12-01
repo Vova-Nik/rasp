@@ -29,90 +29,17 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	// function admdel(ind) {
+	// 	console.log("admdel= " + ind);
+	// }
 
-
-	function admdel(ind) {
-		console.log("admdel= " + ind);
-	}
-
-	$("a").click(function () {
-		alert("Hello world!");
-	});
 
 
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 
 	async function rasp_ready() {
 
-
-
-		/*
-			console.log("rasp script working!");
-			var tableRow = {
-				'ind': 'ind 1',
-				'day': 'day 1',
-				'begtime': 'begtime 1',
-				'place': 'place 1',
-				'contact': 'contact 1',
-				'repeat': 'repeat 1',
-				'serv': 'serv 1'
-			};
-	
-			var table = new Array(8);
-			for (var i = 0; i < table.length; i++) {
-				table[i] = new Array(7);
-			}
-			table[0] = tableRow;
-			table[1].ind = 1; table[1].day = "monday"; table[1].begtime = "19:00"; table[1].place = "Sofi"; table[1].contact = "And";
-			table[2].ind = 2; table[2].day = "monday"; table[2].begtime = "9:00"; table[2].place = "Sofi"; table[2].contact = "And";
-			table[3].ind = 3; table[3].day = "monday"; table[3].begtime = "9:00"; table[3].place = "Sofi"; table[3].contact = "And";
-			table[4].ind = 4; table[4].day = "monday"; table[4].begtime = "9:00"; table[4].place = "Sofi"; table[4].contact = "And";
-			table[5].ind = 5; table[5].day = "monday"; table[5].begtime = "9:00"; table[5].place = "Sofi"; table[5].contact = "And";
-			table[6].ind = 6; table[6].day = "monday"; table[6].begtime = "9:00"; table[6].place = "Sofi"; table[6].contact = "And"; table[6].repeat = "week"; table[6].serv = 'serv';
-	
-			console.log(table);
-	
-			$(".admin-grid-container").append('<div  class="admin-grid-container-div-th">Id</div><div  class="admin-grid-container-div-th">Day</div><div  class="admin-grid-container-div-th">Time</div><div  class="admin-grid-container-div-th">Place</div><div  class="admin-grid-container-div-th">Contact</div><div  class="admin-grid-container-div-th">Action</div>');  //Header of table
-	
-			table.forEach(function (item, i) {
-				$(".admin-grid-container").append('<div class="admin-grid-container-div">' + table[i].ind + '</div>');
-				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].day + '</div>');
-				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].begtime + '</div>');
-				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].place + '</div>');
-				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].contact + '</div>');
-				$(".admin-grid-container").append('<div class="admin-grid-container-div" contenteditable="true">' + table[i].repeat + '</div>');
-			});
-	
-			var lastRow = `
-		<div class="admin-grid-container-div-ed">Id-</div>
-		<div class="admin-grid-container-div-ed">Day-</div>
-		<div class="admin-grid-container-div-ed">Time-</div>
-		<div class="admin-grid-container-div-ed">Place-</div>
-		<div class="admin-grid-container-div-ed">Contact=</div>
-		<div class="admin-grid-container-div-ed">Action-</div>
-		`;
-	
-			$(".admin-grid-container").append(lastRow);
-	
-		}
-		*/
-
-		// let fetch_param = new Object();
-		// fetch_param.action = 'read';
-		// fetch_param.name = 'Nikolas';
-
-		// async function getUser(id){
-		// 	console.log('user processing');
-		// 	let response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
-		// 	let data = await response.json();
-		// 	return data;
-		// }
-
-		// let user = await getUser(1)
-		// console.log(user);
-
 		let rasp = await read_from_db();
-
 		rasp = JSON.parse(rasp);
 		$('body').append(`<div>${rasp}</div>`);
 
@@ -137,16 +64,17 @@
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_show} </div>`);
 		});
 
+		let raspEdit = new RaspEdit(rasp); //rasp[cl]
 
 		$(".admin-grid-container-div").dblclick(function (element) {
 			element.srcElement.classList.forEach(cl => {
 				if (cl.indexOf('agcd-row') > -1) {
 					cl = parseInt(cl.substring(8));
 					//console.log(rasp[cl]);
-					edit_window(rasp[cl]);
+					//let raspEdit = new RaspEdit(rasp[cl]);
+					raspEdit.editEvent(rasp[cl]);
 				}
 			});
-
 		});
 
 	} // end of main()
@@ -163,36 +91,110 @@
 		return rasp;
 	}
 
-	function edit_window(event_to_edit) {
 
-		//let newWin = window.open("about:blank", "hello", "width=200"); //dependent
-		//newWin.document.write(`${event_to_edit.id}  ${event_to_edit.event_name}`);
+	class RaspEdit {
 
-		let windowObjectReference = window.open(
-			"",
-			"Edit Event",
-			"width=220,height=230,resizable,scrollbars=yes,status=1,dialog=yes,minimizable=yes,dependent=yes,width=300,height=400"
-		  );
+		constructor(rasp_array){
+			this.rasp = rasp_array;
+			this.is_activated = false;
+			this.wp_client_area = document.querySelector("#wpbody-content");
 
-		//   "alwaysRaised=yes,dialog=yes,minimizable=yes,dependent=yes,directories=no,hotkeys=no," +
-		//   "location=no,menubar=no,personalbar=no,resizable=yes,scrollbars=yes," +
-		//   "status=no,titlebar=yes,toolbar=no,width=300,height=400,left=100,top=100"
+			this.edit_conteiner = document.createElement("div"); //
+			this.edit_conteiner.className = "edit-container";
+			this.edit_conteiner.style.display = "none";
 
-		//newWin.document.write(`${event_to_edit.id} \n ${event_to_edit.item.event_begin_time} \n  ${event_to_edit.item.event_place} \n  ${event_to_edit.item.event_name}`);
-		/*
-		event_begin_time: "19:00:00"
-		event_category: "0"
-		event_day_of_week: "2"
-		event_description: null
-		event_end_time: null
-		event_name: "Meeting Sofi"
-		event_place: "Канатная 28"
-		event_show: "1"
-		event_url: ""
-		id: "4"
-		*/
+			this.wp_client_area.insertAdjacentElement("beforeBegin", this.edit_conteiner);
+			this.edit_area = document.createElement("div");
+			this.edit_area.className = "edit-area";
+			this.edit_conteiner.appendChild(this.edit_area);
+			//console.log(this.edit_conteiner);
+			this.edit_area.innerHTML = `
+			<form id = "rasp-form">
+				<ul class="flex-outer">
+					<li>
+						<label for="form-time">Event time*</label>
+						<input type="time" id="form-time" placeholder="Time of beginning">
+					</li>
+					<li>
+						<label for="form-name">Event Name*</label>
+						<input type="text" id="form-name" placeholder="Enter event name">
+					</li>
+					<li>
+						<label for="form-description">Description</label>
+						<input type="text" id="form-description" placeholder="Event description">
+					</li>
+					<li>
+						<label for="form-url">Event URL</label>
+						<input type="url" id="form-url" placeholder="Event url">
+					</li>
+					<li>
+						<label for="form-day">Dday of week (0..6)*</label>
+						<input type="number" id="form-day" placeholder="Event day of week">
+					</li>
+
+					<li>
+					<div id = "form_btn_copy" class = 'form-btn'>Change</div>
+					<div id = "form_btn_save" class = 'form-btn'>Save as copy</div>
+					</li>
+				</ul>
+			</form>
+			`
+		}
 
 
+		is_Activated(){
+			return this.is_activated;
+		}
+
+		editEvent(event_to_edit) {
+			if(this.is_activated)
+				return;
+			this.is_activated = true;
+			this.table_container = document.querySelector(".admin-grid-container");
+			this.table_container.style.opacity = ".8";
+			this.edit_conteiner.style.display = "";
+			console.log(event_to_edit);
+
+			document.querySelector("#form-time").innerHTML = event_to_edit.event_begin_time;
+
+			//console.log(this.rasp[parseInt(event_to_edit)]);
+			console.log(this.rasp[1]);
+
+			this.btn_copy = document.querySelector("#form_btn_copy");
+			this.btn_save = document.querySelector("#form_btn_save");
+
+
+
+			
+
+			this.btn_copy.onclick = (function()
+				{alert("button copy");}
+			);
+			this.btn_save.onclick = (function()
+				{alert("button save");}
+			);
+
+
+
+			event_to_edit = null;
+			return event_to_edit;
+		}
 	}
 
+	/*
+	event_begin_time: "19:00:00"
+	event_category: "0"
+	event_day_of_week: "2"
+	event_description: null
+	event_end_time: null
+	event_name: "Meeting Sofi"
+	event_place: "Канатная 28"
+	event_show: "1"
+	event_url: ""
+	id: "4"
+	*/
+
+
 })(jQuery);
+
+
