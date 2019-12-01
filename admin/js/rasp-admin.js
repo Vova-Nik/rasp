@@ -64,7 +64,7 @@
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_show} </div>`);
 		});
 
-		let raspEdit = new RaspEdit(rasp); //rasp[cl]
+		let raspEdit = new RaspEdit(); //rasp[cl]
 
 		$(".admin-grid-container-div").dblclick(function (element) {
 			element.srcElement.classList.forEach(cl => {
@@ -94,8 +94,8 @@
 
 	class RaspEdit {
 
-		constructor(rasp_array){
-			this.rasp = rasp_array;
+		constructor(){
+			//this.rasp = rasp_array;
 			this.is_activated = false;
 			this.wp_client_area = document.querySelector("#wpbody-content");
 
