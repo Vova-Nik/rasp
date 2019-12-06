@@ -35,41 +35,16 @@
 
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 
-
-
-	// $( "#dataTable tbody tr" ).on( "click", function() {
-	// 	console.log( $( this ).text() );
-	//   });
-
 	async function rasp_ready() {
-
-	
-		console.log('ready');
 
 
 		let raspModel = new RaspModel(1);
 		//let rasp_data_loaded_event = new Event('rasp_data_loaded');
 	
 		$('#ddd').on('rasp_data_loaded',  function() {
-			console.log('---event loaded');
+			console.log('---events HBn loaded');
 			let raspView = new RaspView(raspModel.rasp);
 		});
-
-		//$('#ddd').on('click',  function() {console.log('vent loaded');  });
-
-		// let rasp = await read_from_db();
-		// rasp = JSON.parse(rasp);
-
-		//$('body').append(`<div>${rasp}</div>`);
-
-		//let save_res = await save_to_db();
-		//console.log(rasp);
-		
-	    //let raspView = new RaspView(rasp);
-
-		//raspTable.init(rasp);
-		//raspTable.addRow(rasp[1]);
-
 	} // end of main()
 
 	async function save_to_db() {
@@ -88,38 +63,20 @@
 	class RaspModel {
 
 		constructor(record) {
-			//this.rec = record;
-			
-			// let rasp = await this.readDB();
-			
 			this.rasp_data_loaded_event = new Event('rasp_data_loaded');  //let event = new Event(type[, options]);
-
 			this.RaspRecord_ready = false;
-		
 			this.rasp = null; 
 			this.readDB();
-			
-			// console.log("RaspRecord dzala!");
-			// console.log(this.rasp);
 		}
 
 		async readDB() {
 			this.response = await fetch('http://raspwp/wp-json/rasp/v1/rasp', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
 			this.raspp  = await this.response.json();
-			//debugger;
-			//console.log("ReadDB dzala!");
-			console.log(this.raspp);
+			//console.log(this.raspp);
 			this.rasp = JSON.parse(this.raspp);
-
-
-
 			this.RaspRecord_ready = true;
 			let d = document.querySelector('#ddd');
 			d.dispatchEvent(this.rasp_data_loaded_event);
-
-		}
-		to_string() {
-			return JSON.stringify(this.rasp);
 		}
 	}
 
@@ -127,9 +84,7 @@
 
 	class Controller {
 
-		constructor() {
-
-
+	constructor() {
 		}
 	}
 
@@ -138,6 +93,70 @@
 		constructor(rasp_obj) {
 			this.rows_number = 0;
 			this.rasp = rasp_obj;
+			this.reDraw();
+			// console.log(this.rasp);
+			// $(".admin-grid-container").append(`
+			// <div  class="admin-grid-container-div-th">Copy</div>
+			// <div  class="admin-grid-container-div-th">Id</div>
+			// <div  class="admin-grid-container-div-th">Day</div>
+			// <div  class="admin-grid-container-div-th">Time</div>
+			// <div  class="admin-grid-container-div-th">Place</div>
+			// <div  class="admin-grid-container-div-th">Name</div>
+			// <div  class="admin-grid-container-div-th">Display</div>
+			// <div  class="admin-grid-container-div-th">Del</div>
+			// `);  //Header of table
+
+			// this.rasp.forEach((item) => {
+			// 	this.displayRow(item);
+			// });
+
+			// $(".admin-grid-container").append(`
+			// <div  class="admin-grid-container-div-ed btn_copy"></div>
+			// <div  class="admin-grid-container-div-ed">-</div>
+			// <div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			// <div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			// <div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			// <div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			// <div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			// <div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			// `);
+		}
+
+		copy_btn_processing(eventObject) {
+
+			//console.log(eventObject.data.num);
+			//console.log(eventObject.data.th.rasp[eventObject.data.num]);
+			eventObject.data.th.copyRow(eventObject.data.th.rasp[eventObject.data.num]);
+
+		};
+
+		del_btn_processing(eventObject) {
+			console.log(eventObject.data.num);
+			eventObject.data.th.delRow(eventObject.data.num);
+			//console.log(eventObject.data.th.rasp[eventObject.data.num]);
+		};
+
+		addRow(row){
+			//$("admin-grid-container-div-ed btn_copy").append
+
+		}
+
+		delRow(row_number){
+			this.rasp.splice(row_number, 1);
+			//$(`admin-grid-container-div agcd-row${n}`).remove();
+			this.reDraw();
+		}
+
+		copyRow(row){
+			this.rasp.push(row);
+			//this.rasp[this.rasp.length-1].id='';
+			//console.log(this.rasp);
+			this.reDraw();
+		}
+
+		reDraw(){
+			$( ".admin-grid-container > div" ).remove();
+			this.rows_number = 0;
 			console.log(this.rasp);
 			$(".admin-grid-container").append(`
 			<div  class="admin-grid-container-div-th">Copy</div>
@@ -151,36 +170,27 @@
 			`);  //Header of table
 
 			this.rasp.forEach((item) => {
-				this.addRow(item);
+				this.displayRow(item);
 			});
 
 			$(".admin-grid-container").append(`
-			<div contenteditable="true" class="admin-grid-container-div-ed">--</div>
-			<div contenteditable="true" class="admin-grid-container-div-ed">--</div>
-			<div contenteditable="true" class="admin-grid-container-div-ed">--</div>
-			<div contenteditable="true" class="admin-grid-container-div-ed">--</div>
-			<div contenteditable="true" class="admin-grid-container-div-ed">--</div>
-			<div contenteditable="true" class="admin-grid-container-div-ed">--</div>
-			<div contenteditable="true" class="admin-grid-container-div-ed">--</div>
-			<div contenteditable="true" class="admin-grid-container-div-ed">--</div>
+			<div  class="admin-grid-container-div-ed btn_copy"></div>
+			<div  class="admin-grid-container-div-ed">-</div>
+			<div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			<div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			<div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			<div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			<div contenteditable="true" class="admin-grid-container-div-ed"></div>
+			<div contenteditable="true" class="admin-grid-container-div-ed"></div>
 			`);
+
 		}
 
-		copy_btn_processing(eventObject) {
-			console.log(eventObject.data)
-		};
 
-		del_btn_processing(eventObject) {
-			console.log(eventObject.data)
-		};
+		displayRow(row) {
 
-
-		addRow(row) {
-
-			console.log(this.rows_number);
-
+			//console.log(row);
 			$(".admin-grid-container").append(`<div  class="btn_copy agcd-row${this.rows_number} copy-btn${this.rows_number}"> copy </div>`);
-
 			$(".admin-grid-container").append(`<div contenteditable="true" class="admin-grid-container-div agcd-row${this.rows_number}"> ${row.id}</div>`);
 			$(".admin-grid-container").append(`<div contenteditable="true" class="admin-grid-container-div agcd-row${this.rows_number}"> ${row.event_day_of_week} </div>`);
 			$(".admin-grid-container").append(`<div contenteditable="true" class="admin-grid-container-div agcd-row${this.rows_number}"> ${row.event_begin_time} </div>`);
@@ -189,12 +199,9 @@
 			$(".admin-grid-container").append(`<div contenteditable="true" class="admin-grid-container-div agcd-row${this.rows_number}"> ${row.event_show} </div>`);
 			$(".admin-grid-container").append(`<div class="btn_del agcd-row${this.rows_number} del-btn${this.rows_number}"> del </div>`);
 
-			$(`.copy-btn${this.rows_number}`).on("click", { num: this.rows_number, act: "copy" }, this.copy_btn_processing); // , {num: this.rows_number});
-			$(`.del-btn${this.rows_number}`).on("click", { num: this.rows_number, act: "del" }, this.del_btn_processing);
-
-
+			$(`.copy-btn${this.rows_number}`).on("click", { num: this.rows_number, act: "copy", th: this }, this.copy_btn_processing); // , {num: this.rows_number});
+			$(`.del-btn${this.rows_number}`).on("click", { num: this.rows_number, act: "del", th: this }, this.del_btn_processing);
 			this.rows_number++;
-
 		}
 
 		get number_of_rows() {
