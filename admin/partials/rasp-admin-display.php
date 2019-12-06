@@ -14,6 +14,7 @@ function display_frame()
 {
 	echo "<div class='container'>";
 	echo "<h2>Its admin part of RASP</h2>";
+	echo "<div  id='ddd'></div>";  // empty elem to contain event for data loaded
 	echo "<div class='admin-grid-container' id='tab1'></div>";
 	echo "</div>";
 }
@@ -28,7 +29,7 @@ function rasp_restAPI_point(WP_REST_Request $request)
 		wp_die($wpdb->error);
 	//$ans = $args[0];
 	$action = $request['action'];
-	error_log('Request = ' . $request['action']);
+	//error_log('Request = ' . $request['action']);
 
 	if($action == 'read')
 		return  read_rasp_DB();
@@ -51,7 +52,7 @@ function read_rasp_DB()
 	$results = $wpdb->get_results("SELECT * FROM $table_name");
 
 	$to_page = json_encode($results, JSON_HEX_TAG);
-	//error_log($to_page);
+	error_log($to_page);
 	return  $to_page;
 
 }

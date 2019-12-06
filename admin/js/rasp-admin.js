@@ -1,7 +1,7 @@
 (function ($) {
 	'use strict';
 
-	/**
+	{/**
 	 * All of the code for your admin-facing JavaScript source
 	 * should reside in this file.
 	 *
@@ -31,25 +31,44 @@
 
 	// function admdel(ind) {
 	// 	console.log("admdel= " + ind);
-	// }
-
-
+	 }
 
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 
+
+
+	// $( "#dataTable tbody tr" ).on( "click", function() {
+	// 	console.log( $( this ).text() );
+	//   });
+
 	async function rasp_ready() {
 
-		let rasp = await read_from_db();
-		rasp = JSON.parse(rasp);
+	
+		console.log('ready');
+
+
+		let raspModel = new RaspModel(1);
+		//let rasp_data_loaded_event = new Event('rasp_data_loaded');
+	
+		$('#ddd').on('rasp_data_loaded',  function() {
+			console.log('---event loaded');
+			let raspView = new RaspView(raspModel.rasp);
+		});
+
+		//$('#ddd').on('click',  function() {console.log('vent loaded');  });
+
+		// let rasp = await read_from_db();
+		// rasp = JSON.parse(rasp);
 
 		//$('body').append(`<div>${rasp}</div>`);
 
 		//let save_res = await save_to_db();
-		console.log(rasp);
+		//console.log(rasp);
+		
+	    //let raspView = new RaspView(rasp);
 
-		let raspTable = new RaspTable(rasp);
 		//raspTable.init(rasp);
-		raspTable.addRow(rasp[1]);
+		//raspTable.addRow(rasp[1]);
 
 	} // end of main()
 
@@ -59,40 +78,67 @@
 		return rasp;
 	}
 
-	async function read_from_db() {
-		let response = await fetch('http://raspwp/wp-json/rasp/v1/rasp', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
-		let rasp = await response.json();
-		return rasp;
-	}
+	// async function read_from_db() {
+	// 	let response = await fetch('http://raspwp/wp-json/rasp/v1/rasp', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
+	// 	let rasp = await response.json();
+	// 	return rasp;
+	// }
 
-
-	class RaspRecord {
+	/* ---------------------------------------------------------------------------------------------------- */
+	class RaspModel {
 
 		constructor(record) {
-			this.rec = record;
+			//this.rec = record;
+			
+			// let rasp = await this.readDB();
+			
+			this.rasp_data_loaded_event = new Event('rasp_data_loaded');  //let event = new Event(type[, options]);
+
+			this.RaspRecord_ready = false;
+		
+			this.rasp = null; 
+			this.readDB();
+			
+			// console.log("RaspRecord dzala!");
+			// console.log(this.rasp);
 		}
 
-		editEvent(event_to_edit) {
-			console.log(this.rasp[1]);
-			this.btn_copy = document.querySelector("#form_btn_copy");
-			this.btn_save = document.querySelector("#form_btn_save");
-			this.btn_copy.onclick = (function () { alert("button copy"); }
-			);
-			this.btn_save.onclick = (function () { alert("button save"); }
-			);
-		}
+		async readDB() {
+			this.response = await fetch('http://raspwp/wp-json/rasp/v1/rasp', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
+			this.raspp  = await this.response.json();
+			//debugger;
+			//console.log("ReadDB dzala!");
+			console.log(this.raspp);
+			this.rasp = JSON.parse(this.raspp);
 
+
+
+			this.RaspRecord_ready = true;
+			let d = document.querySelector('#ddd');
+			d.dispatchEvent(this.rasp_data_loaded_event);
+
+		}
 		to_string() {
 			return JSON.stringify(this.rasp);
 		}
 	}
 
-	class RaspTable {
+	/* ---------------------------------------------------------------------------------------------------- */
 
-	constructor(rasp_obj) {
+	class Controller {
+
+		constructor() {
+
+
+		}
+	}
+
+	class RaspView {
+
+		constructor(rasp_obj) {
 			this.rows_number = 0;
 			this.rasp = rasp_obj;
-
+			console.log(this.rasp);
 			$(".admin-grid-container").append(`
 			<div  class="admin-grid-container-div-th">Copy</div>
 			<div  class="admin-grid-container-div-th">Id</div>
@@ -120,17 +166,17 @@
 			`);
 		}
 
-		copy_btn_processing (eventObject) {
+		copy_btn_processing(eventObject) {
 			console.log(eventObject.data)
 		};
 
-		del_btn_processing (eventObject) {
+		del_btn_processing(eventObject) {
 			console.log(eventObject.data)
 		};
 
 
 		addRow(row) {
-			
+
 			console.log(this.rows_number);
 
 			$(".admin-grid-container").append(`<div  class="btn_copy agcd-row${this.rows_number} copy-btn${this.rows_number}"> copy </div>`);
@@ -143,9 +189,9 @@
 			$(".admin-grid-container").append(`<div contenteditable="true" class="admin-grid-container-div agcd-row${this.rows_number}"> ${row.event_show} </div>`);
 			$(".admin-grid-container").append(`<div class="btn_del agcd-row${this.rows_number} del-btn${this.rows_number}"> del </div>`);
 
-			$(`.copy-btn${this.rows_number}`).on( "click",  {num: this.rows_number, act: "copy"},  this.copy_btn_processing); // , {num: this.rows_number});
-			$(`.del-btn${this.rows_number}`).on( "click",  {num: this.rows_number, act: "del"},  this.del_btn_processing);
-			
+			$(`.copy-btn${this.rows_number}`).on("click", { num: this.rows_number, act: "copy" }, this.copy_btn_processing); // , {num: this.rows_number});
+			$(`.del-btn${this.rows_number}`).on("click", { num: this.rows_number, act: "del" }, this.del_btn_processing);
+
 
 			this.rows_number++;
 
@@ -156,9 +202,6 @@
 		}
 
 	}
-
-
-
 
 	/*
 	event_begin_time: "19:00:00"
