@@ -24,11 +24,23 @@
   }
   
   .admin-grid-container-div {
-    background-color: rgb(255, 255, 255);
+    /* background-color: rgb(255, 255, 255); */
     text-align: center;
     vertical-align: center;
     margin: 2px;
   }
+ .is_old {
+    background-color: rgb(255, 255, 255);
+  }
+
+  .is_new {
+    background-color: rgb(248, 220, 220);
+  }
+
+  .id_col{
+    background-color: rgb(202, 202, 202);
+  }
+
   
   .admin-grid-container-div-ed  {
     background-color: white;
@@ -43,6 +55,7 @@
   background-color: rgb(113, 250, 227);
   text-align: center;
   font-weight: bold;
+  user-select: none;
 }
 .btn_copy:hover{
   background-color: rgb(117, 250, 28);
@@ -53,14 +66,47 @@
   background-color: rgb(246, 202, 131);
   text-align: center;
   font-weight: bold;
+  user-select: none;
 }
 .btn_del:hover{
   background-color: rgb(245, 52, 52);
   cursor: pointer;
 
 }
+/*********************************** Submit Buttons **********************************/
 
- .adm-button
+.submit_buton_container{
+  display: flex;
+  user-select: none;
+}
+
+.submit_buttons{
+  border-style: solid;
+  border-width: medium;
+  border-radius: 1em;
+  text-align: center;
+  margin: 16px;
+  padding: 4px;
+  font-weight: 700;
+}
+
+.submit_buttons:hover {
+  background-color: rgb(245, 52, 52);
+  cursor: pointer;
+}
+
+.button_save{
+  width: 60%;
+  background-color:  rgb(113, 250, 227);
+  /* display: inline; */
+}
+
+.button_discard{
+  width: auto;
+  background-color: rgb(206, 90, 45);
+}
+
+ /* .adm-button
   {
       text-align: center;
       display: inline;
@@ -71,9 +117,7 @@
       background-color: rgba(55, 55, 55, 0.1);
       cursor: pointer;
       border-radius: 5px;
-  }
+  } */
   
 
-
-  /* ***************************  Form ******************************************/
  
