@@ -128,8 +128,8 @@
 			<form id = "rasp-form">
 				<ul class="flex-outer">
 					<li>
-						<label for="form-time">Event time*</label>
-						<input type="time" id="form-time" placeholder="Time of beginning">
+						<label for="form-time">Event time HH:MM:SS</label>
+						<input type="text" id="form-time" placeholder="00:00:00">
 					</li>
 
 					<li>
@@ -175,15 +175,45 @@
 			this.btn_copy.onclick = () => {
 				this.edit_conteiner.style.display = "none";
 				this.is_activated = false;
+				{				//form submiting
+					let time = $('#form-time').val();
+					jQuery.trim(time);
+					let th = parseInt(time.substring(0, 2));
+					if (isNaN(th)) th = 0;
+					if (th > 23) th = 23;
+					if (th < 0) th = 0;
+					if (th < 10) th = '0' + th;
+					else th = '' + th;
 
-				this.event.event_begin_time = $('#form-time').val();
-				this.event.event_day_of_week = $('#form-day').val();
-				this.event.event_name = $('#form-name').val();
-				this.event.event_description = $('#description').val();
-				this.event.event_url = $('#form-url').val();
-				this.event.event_show = $('#form-show').val();
+					let tm = parseInt(time.substring(3, 5));
+					if (isNaN(tm)) tm = 0;
+					if (tm > 59) tm = 59;
+					if (tm < 0) tm = 0;
+					if (tm < 10) tm = '0' + tm;
+					else tm = '' + tm;
 
-				$('#form-time').textContent;
+					let ts = parseInt(time.substring(6, 8));
+					if (isNaN(ts)) ts = 0;
+					if (ts > 59) ts = 59;
+					if (ts < 0) ts = 0;
+					if (ts < 10) ts = '0' + ts;
+					else ts = '' + ts;
+
+					this.event.event_begin_time = th + ':' + tm + ':' + ts;
+
+					let dofw = $('#form-day').val();
+					jQuery.trim(time);
+					dofw = parseInt(dofw);
+					if (isNaN(dofw)) dofw = 0;
+					if (dofw < 0) dofw = 0;
+					if (dofw > 6) dofw = 6;
+					this.event.event_day_of_week = dofw;
+					this.event.event_name = $('#form-name').val();
+					this.event.event_description = $('#description').val();
+					this.event.event_url = $('#form-url').val();
+					this.event.event_show = $('#form-show').val();
+				}
+				//	$('#form-time').textContent;
 				this.event.id = "";
 				console.log(this.event);
 
@@ -192,7 +222,7 @@
 
 		}
 
-		getEvent(){
+		getEvent() {
 			return this.event;
 		}
 
