@@ -68,13 +68,24 @@ class Rasp_Admin
 		add_action("admin_menu", array($this, "options_page"));
 
 		add_action('rest_api_init', function () {
-			register_rest_route('rasp/v1', '/rasp', 
+			register_rest_route('rasp/v1', '/raspread', 
 			array(
 				'methods' => 'POST',
-				'callback' => 'rasp_restAPI_point',
+				'callback' => 'rasp_restAPI_point_read',
 				'args' => array(),
 			));
 		});
+
+
+		add_action('rest_api_init', function () {
+			register_rest_route('rasp/v1', '/raspwrite', 
+			array(
+				'methods' => 'POST',
+				'callback' => 'rasp_restAPI_point_write',
+				'args' => array(),
+			));
+		});
+
 	}
 
 	/**VVV
