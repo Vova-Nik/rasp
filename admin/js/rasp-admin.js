@@ -1,46 +1,11 @@
 (function ($) {
 	'use strict';
-	{
-		/**
-		 * All of the code for your admin-facing JavaScript source
-		 * should reside in this file.
-		 *
-		 * Note: It has been assumed you will write jQuery code here, so the
-		 * $ function reference has been prepared for usage within the scope
-		 * of this function.
-		 *
-		 * This enables you to define handlers, for when the DOM is ready:
-		 *
-		 * $(function() {
-		 *
-		 * });
-		 *
-		 * When the window is loaded:
-		 *
-		 * $( window ).load(function() {
-		 *
-		 * });
-		 *
-		 * ...and/or other possibilities.
-		 *
-		 * Ideally, it is not considered best practise to attach more than a
-		 * single DOM-ready or window-load handler for a particular page.
-		 * Although scripts in the WordPress core, Plugins and Themes may be
-		 * practising this, we should strive to set a better example in our own work.
-		 */
-	}
-
-
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 
 	async function rasp_ready() {
 
-		var rasp = await read_from_db();
+		let rasp = await read_from_db();
 		rasp = JSON.parse(rasp);
-		$('body').append(`<div>${rasp}</div>`);
-
-		//let save_res = await save_to_db();
-		//console.log(save_res);
 
 		$(".admin-grid-container").append(`
 			<div  class="admin-grid-container-div-th">Id</div>
@@ -67,7 +32,6 @@
 		$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
 		$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">-  </div>`);
 
-
 		let raspEdit = new RaspEdit(rasp); //rasp[cl]
 
 		$(".admin-grid-container-div").on("dblclick", function (element) {
@@ -86,245 +50,262 @@
 			}
 		});
 
-
 	} // end of main()
 
-	async function save_to_db(rasp_event) {
-		//rasp_event.action = 'save';
-		let req_body = JSON.stringify(rasp_event);
-		console.log(req_body);
-		// let json_rasp_event = JSON.stringify(rasp_event);
-		// let command = JSON.stringify({ action: 'save'})
-		let response = await fetch('http://raspwp/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
-		let rasp = await response.json();
-		return rasp_event;
+
+async function save_to_db(rasp_event) {
+	//rasp_event.action = 'save';
+	let req_body = JSON.stringify(rasp_event);
+	console.log(req_body);
+	// let json_rasp_event = JSON.stringify(rasp_event);
+	// let command = JSON.stringify({ action: 'save'})
+	let response = await fetch('http://raspwp/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+	let rasp = await response.json();
+	return rasp_event;
+}
+
+async function read_from_db() {
+	let response = await fetch('http://raspwp/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'readd' }) });
+	let rasp = await response.json();
+	return rasp;
+}
+
+class raspEvent {
+	constructor(templObj) {
+		if (typeof templObj === "undefined") {
+			this.event_begin_time = '23:59:30';
+			this.event_category = "0";
+			this.event_day_of_week = 0;
+			this.event_description = 'event_description';
+			this.event_end_time = 'event_end_time',
+			this.event_name = 'event_name';
+			this.event_place = 'event_place';
+			this.event_show = 1;
+			this.event_url = 'event_url';
+		}
+		else {
+			if (typeof templObj.event_begin_time === "undefined") this.event_begin_time = '00:00:00';
+			else this.event_begin_time = templObj.event_begin_time;
+			if (typeof templObj.event_category === "undefined") this.event_category = '0';
+			else this.event_category = templObj.event_category;
+			if (typeof templObj.event_day_of_week === "undefined") this.event_day_of_week = 0;
+			else this.event_day_of_week = templObj.event_day_of_week;
+			if (typeof templObj.event_description === "undefined") this.event_description = 'Event Description';
+			else this.event_description = templObj.event_description;
+			if (typeof templObj.event_end_time === "undefined") this.event_end_time = 0;
+			else this.event_end_time = templObj.event_end_time;
+			if (typeof templObj.event_name === "undefined") this.event_name = 'Event Name';
+			else this.event_name = templObj.event_name;
+			if (typeof templObj.event_place === "undefined") this.event_place = 'Event Place';
+			else this.event_place = templObj.event_place;
+			if (typeof templObj.event_show === "undefined") this.event_show = 1;
+			else this.event_show = templObj.event_show;
+			if (typeof templObj.event_url === "undefined") this.event_url = 'Event URL';
+			else this.event_url = templObj.event_url;
+		}
 	}
-
-	async function read_from_db() {
-		let response = await fetch('http://raspwp/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'readd' }) });
-		let rasp = await response.json();
-		return rasp;
-	}
+}
 
 
-	class RaspEdit {
+class RaspEdit {
+	constructor(rasp_array) {
+		this.rasp = rasp_array;
+		this.is_activated = false;
+		this.wp_client_area = document.querySelector("#wpbody-content");
+		this.edit_conteiner = document.createElement("div"); //
+		this.edit_conteiner.className = "edit-container";
+		this.edit_conteiner.style.display = "none";
+		this.wp_client_area.insertAdjacentElement("beforeBegin", this.edit_conteiner);
+		this.edit_area = document.createElement("div");
+		this.edit_area.className = "edit-area";
+		this.edit_conteiner.appendChild(this.edit_area);
+		/********************** HTML for FORM******************************** */
+		{
+			this.edit_area.innerHTML = `
+		<form id = "rasp-form">
+			<ul class="flex-outer">
+				<li>
+					<label for="form-time" class="input-label">Event time HH:MM:SS</label>
+					<input type="text" id="form-time" placeholder="00:00:00">
+				</li>
 
-		constructor(rasp_array) {
-			this.rasp = rasp_array;
-			this.is_activated = false;
-			this.wp_client_area = document.querySelector("#wpbody-content");
+				<li>
+					<label for="form-day" class="input-label">Dday of week (0..6)*</label>
+					<input type="number" id="form-day" placeholder="Event day of week">
+				</li>
 
-			this.edit_conteiner = document.createElement("div"); //
-			this.edit_conteiner.className = "edit-container";
+				<li>
+					<label for="form-name" class="input-label">Event Name*</label>
+					<input type="text" id="form-name" placeholder="Enter event name">
+				</li>
+				<li>
+				<label for="form-place" class="input-label">Description</label>
+				<input type="text" id="form-place" placeholder="Event place">
+				</li>
+				<li>
+					<label for="form-description" class="input-label">Description</label>
+					<input type="text" id="form-description" placeholder="Event description">
+				</li>
+				<li>
+					<label for="form-url" class="input-label">Event URL</label>
+					<input type="url" id="form-url" placeholder="Event url">
+				</li>
+				<li>
+				<label for="form-show" class="input-label">Show 1-yes, 0-no*</label>
+				<input type="number" id="form-show" placeholder="1-show, 0-hide ">
+				</li>
+
+				<li>
+				<div id = "form_btn_save" class = 'form-btn'>Save</div>
+				<div id = "form_btn_copy" class = 'form-btn'>Save as copy</div>
+				
+				</li>
+			</ul>
+		</form>
+		`
+		}
+		//<div id = "form_btn_save" class = 'form-btn'>Save as copy</div>
+		this.btn_copy = document.querySelector("#form_btn_copy");
+		this.btn_save = document.querySelector("#form_btn_save");
+
+		this.btn_save.onclick = () => {
 			this.edit_conteiner.style.display = "none";
+			this.is_activated = false;
+			console.log('btn save');
 
-			this.wp_client_area.insertAdjacentElement("beforeBegin", this.edit_conteiner);
-			this.edit_area = document.createElement("div");
-			this.edit_area.className = "edit-area";
-			this.edit_conteiner.appendChild(this.edit_area);
-			//console.log(this.edit_conteiner);
-			{
-				this.edit_area.innerHTML = `
-			<form id = "rasp-form">
-				<ul class="flex-outer">
-					<li>
-						<label for="form-time">Event time HH:MM:SS</label>
-						<input type="text" id="form-time" placeholder="00:00:00">
-					</li>
+			{				//form submiting
+				let time = $('#form-time').val();
+				jQuery.trim(time);
+				let th = parseInt(time.substring(0, 2));
+				if (isNaN(th)) th = 0;
+				if (th > 23) th = 23;
+				if (th < 0) th = 0;
+				if (th < 10) th = '0' + th;
+				else th = '' + th;
 
-					<li>
-						<label for="form-day">Dday of week (0..6)*</label>
-						<input type="number" id="form-day" placeholder="Event day of week">
-					</li>
+				let tm = parseInt(time.substring(3, 5));
+				if (isNaN(tm)) tm = 0;
+				if (tm > 59) tm = 59;
+				if (tm < 0) tm = 0;
+				if (tm < 10) tm = '0' + tm;
+				else tm = '' + tm;
 
-					<li>
-						<label for="form-name">Event Name*</label>
-						<input type="text" id="form-name" placeholder="Enter event name">
-					</li>
-					<li>
-						<label for="form-description">Description</label>
-						<input type="text" id="form-description" placeholder="Event description">
-					</li>
-					<li>
-						<label for="form-url">Event URL</label>
-						<input type="url" id="form-url" placeholder="Event url">
-					</li>
-					<li>
-					<label for="form-show">Show 1-yes, 0-no*</label>
-					<input type="number" id="form-show" placeholder="1-show, 0-hide ">
-					</li>
+				let ts = parseInt(time.substring(6, 8));
+				if (isNaN(ts)) ts = 0;
+				if (ts > 59) ts = 59;
+				if (ts < 0) ts = 0;
+				if (ts < 10) ts = '0' + ts;
+				else ts = '' + ts;
 
-					<li>
-					<div id = "form_btn_copy" class = 'form-btn'>Save</div>
-					<div id = "form_btn_save" class = 'form-btn'>Save as copy</div>
-					</li>
-				</ul>
-			</form>
-			`
-			}
-			this.btn_copy = document.querySelector("#form_btn_copy");
-			this.btn_save = document.querySelector("#form_btn_save");
+				this.event.event_begin_time = th + ':' + tm + ':' + ts;
 
-			this.btn_save.onclick = () => {
-				this.edit_conteiner.style.display = "none";
-				this.is_activated = false;
-				console.log('btn save');
-				//save_to_db(this.event);
+				let dofw = $('#form-day').val();
+				jQuery.trim(time);
+				dofw = parseInt(dofw);
+				if (isNaN(dofw)) dofw = 0;
+				if (dofw < 0) dofw = 0;
+				if (dofw > 6) dofw = dofw % 7;
+				this.event.event_day_of_week = dofw;
+
+				this.event.event_name = $('#form-name').val();
+				this.event.event_place = $('#form-place').val();
+				this.event.event_description = $('#form-description').val();
+				this.event.event_url = $('#form-url').val();
+
+				let sh = $('#form-show').val();
+				if (sh != 0) sh = 1;
+				this.event.event_show = sh;
 			}
 
-			this.btn_copy.onclick = () => {
-				this.edit_conteiner.style.display = "none";
-				this.is_activated = false;
-				{				//form submiting
-					let time = $('#form-time').val();
-					jQuery.trim(time);
-					let th = parseInt(time.substring(0, 2));
-					if (isNaN(th)) th = 0;
-					if (th > 23) th = 23;
-					if (th < 0) th = 0;
-					if (th < 10) th = '0' + th;
-					else th = '' + th;
+			save_to_db(this.event);
+		}
 
-					let tm = parseInt(time.substring(3, 5));
-					if (isNaN(tm)) tm = 0;
-					if (tm > 59) tm = 59;
-					if (tm < 0) tm = 0;
-					if (tm < 10) tm = '0' + tm;
-					else tm = '' + tm;
+		this.btn_copy.onclick = () => {
+			this.edit_conteiner.style.display = "none";
+			this.is_activated = false;
+			/************************ FORM data checking***************************/
+			{				//form submiting
+				let time = $('#form-time').val();
+				jQuery.trim(time);
+				let th = parseInt(time.substring(0, 2));
+				if (isNaN(th)) th = 0;
+				if (th > 23) th = 23;
+				if (th < 0) th = 0;
+				if (th < 10) th = '0' + th;
+				else th = '' + th;
 
-					let ts = parseInt(time.substring(6, 8));
-					if (isNaN(ts)) ts = 0;
-					if (ts > 59) ts = 59;
-					if (ts < 0) ts = 0;
-					if (ts < 10) ts = '0' + ts;
-					else ts = '' + ts;
+				let tm = parseInt(time.substring(3, 5));
+				if (isNaN(tm)) tm = 0;
+				if (tm > 59) tm = 59;
+				if (tm < 0) tm = 0;
+				if (tm < 10) tm = '0' + tm;
+				else tm = '' + tm;
 
-					this.event.event_begin_time = th + ':' + tm + ':' + ts;
+				let ts = parseInt(time.substring(6, 8));
+				if (isNaN(ts)) ts = 0;
+				if (ts > 59) ts = 59;
+				if (ts < 0) ts = 0;
+				if (ts < 10) ts = '0' + ts;
+				else ts = '' + ts;
 
-					let dofw = $('#form-day').val();
-					jQuery.trim(time);
-					dofw = parseInt(dofw);
-					if (isNaN(dofw)) dofw = 0;
-					if (dofw < 0) dofw = 0;
-					if (dofw > 6) dofw = 6;
-					this.event.event_day_of_week = dofw;
-					this.event.event_name = $('#form-name').val();
-					this.event.event_description = $('#description').val();
-					this.event.event_url = $('#form-url').val();
-					this.event.event_show = $('#form-show').val();
-				}
-				//	$('#form-time').textContent;
-				this.event.id = "";
-				console.log(this.event);
+				this.event.event_begin_time = th + ':' + tm + ':' + ts;
 
-				save_to_db(this.event);
+				let dofw = $('#form-day').val();
+				jQuery.trim(time);
+				dofw = parseInt(dofw);
+				if (isNaN(dofw)) dofw = 0;
+				if (dofw < 0) dofw = 0;
+				if (dofw > 6) dofw = dofw % 7;
+				this.event.event_day_of_week = dofw;
+
+				this.event.event_name = $('#form-name').val();
+				this.event.event_place = $('#form-place').val();
+				this.event.event_description = $('#form-description').val();
+				this.event.event_url = $('#form-url').val();
+
+				let sh = $('#form-show').val();
+				if (sh != 0) sh = 1;
+				this.event.event_show = sh;
 			}
-
+			this.event.id = "";
+			console.log(this.event);
+			save_to_db(this.event);
 		}
-
-		getEvent() {
-			return this.event;
-		}
-
-		editEvent(action, event_to_edit) {
-			if (this.is_activated)
-				return;
-			this.is_activated = true;
-			if (action == 'create') {
-				this.event = Object.assign({}, event_to_edit);
-				this.event.event_begin_time = 0;
-				this.event.event_category = "0";
-				this.event.event_day_of_week = "-";
-				this.event.event_description = null;
-				this.event.event_end_time = null;
-				this.event.event_name = "";
-				this.event.event_place = "";
-				this.event.event_show = "1";
-				this.event.event_url = "";
-				this.event.id = "";
-
-				console.log(this.event);
-			}
-			else {
-				this.event = event_to_edit;
-				console.log(this.event);
-			}
-
-			this.table_container = document.querySelector(".admin-grid-container");
-			this.table_container.style.opacity = ".8";
-			this.edit_conteiner.style.display = "";
-			//document.querySelector("#form-time").innerHTML = event_to_edit.event_begin_time;
-			$("#form-time").val(this.event.event_begin_time);
-			$("#form-name").val(this.event.event_name);
-			$("#form-description").val(this.event_description);
-			$("#form-url").val(this.event.event_url);
-			$("#form-day").val(this.event.event_day_of_week);
-
-
-			// this.btn_copy = document.querySelector("#form_btn_copy");
-			// this.btn_save = document.querySelector("#form_btn_save");
-
-
-			// this.btn_copy.onclick = () => {
-			// 	this.edit_conteiner.style.display = "none";
-			// 	this.is_activated = false;
-			// 	//console.log('E TO EDIT' + this.event.event_begin_time);
-			// }
-			// this.btn_save.onclick = () => {
-			// 	this.edit_conteiner.style.display = "none";
-			// 	this.is_activated = false;
-			// }
-
-			// event_to_edit = null;
-			// return event_to_edit;
-		}
-
-		editEmptyEvent(templet_event) {
-			this.event = Object.assign({}, templet_event);
-			this.event.event_begin_time = 0;
-			this.event.event_category = "0";
-			this.event.event_day_of_week = "-";
-			this.event.event_description = null;
-			this.event.event_end_time = null;
-			this.event.event_name = "";
-			this.event.event_place = "";
-			this.event.event_show = "1";
-			this.event.event_url = "";
-
-
-			this.table_container = document.querySelector(".admin-grid-container");
-			this.table_container.style.opacity = ".8";
-			this.edit_conteiner.style.display = "";
-
-			$("#form-time").val(this.event.event_begin_time);
-			$("#form-name").val(this.event.event_name);
-			$("#form-description").val(this.event_description);
-			$("#form-url").val(this.event.event_url);
-			$("#form-day").val(this.event.event_day_of_week);
-
-		}
-
-		is_Activated() {
-			return this.is_activated;
-		}
-
-
-
-
 	}
 
-	/*
-					event_begin_time: 0,
-					event_category: "0",
-					event_day_of_week: "-",
-					event_description: null,
-					event_end_time: null,
-					event_name: "",
-					event_place: "",
-					event_show: "1",
-					event_url: "",
-	*/
+	getEvent() {
+		return this.event;
+	}
 
+	editEvent(action, event_to_edit) {
+		if (this.is_activated)
+			return;
+		this.is_activated = true;
+		if (action == 'create') {
+			this.event = new raspEvent();
+			$('#form_btn_copy').css("display", "none");
+		}
+		else {
+			$('#form_btn_copy').css("display", "block");
+			this.event = event_to_edit;
+			console.log('else branch');
+		}
+
+		this.table_container = document.querySelector(".admin-grid-container");
+		this.table_container.style.opacity = ".8";
+		this.edit_conteiner.style.display = "";
+
+		console.log('---------------------');
+		console.log(this.event.event_description);
+
+		$("#form-time").val(this.event.event_begin_time);
+		$("#form-day").val(this.event.event_day_of_week);
+		$("#form-name").val(this.event.event_name);
+		$("#form-description").val(this.event.event_description);
+		$("#form-url").val(this.event.event_url);
+		$("#form-show").val(this.event.event_show);
+	}
+}
 
 })(jQuery);
 

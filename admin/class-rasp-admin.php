@@ -76,7 +76,6 @@ class Rasp_Admin
 			));
 		});
 
-
 		add_action('rest_api_init', function () {
 			register_rest_route('rasp/v1', '/raspwrite', 
 			array(
@@ -85,7 +84,6 @@ class Rasp_Admin
 				'args' => array(),
 			));
 		});
-
 	}
 
 	/**VVV
