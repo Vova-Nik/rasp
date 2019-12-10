@@ -8,29 +8,36 @@
 		rasp = JSON.parse(rasp);
 
 		$(".admin-grid-container").append(`
-			<div  class="admin-grid-container-div-th">Id</div>
+			<div  class="admin-grid-container-div-th grid-act">Action</div>
+
+
+			<div  class="admin-grid-container-div-th ">Id</div>
 			<div  class="admin-grid-container-div-th">Day</div>
 			<div  class="admin-grid-container-div-th">Time</div>
 			<div  class="admin-grid-container-div-th">Place</div>
 			<div  class="admin-grid-container-div-th">Name</div>
 			<div  class="admin-grid-container-div-th">Display</div>
+			<div  class="admin-grid-container-div-th">Del</div>	
 			`);  //Header of table
 
 		rasp.forEach(function (item, i) {
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn agcd-row${i}">Edit`);
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn agcd-row${i}">Copy`);
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.id}</div>`);
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_day_of_week} </div>`);
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_begin_time} </div>`);
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_place} </div>`);
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_name} </div>`);
 			$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_show} </div>`);
+			$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn agcd-row${i}">Del</div>`);
 		});
 
-		$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty"> - </div>`);
-		$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
-		$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
-		$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
-		$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
-		$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">-  </div>`);
+		// $(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty"> - </div>`);
+		// $(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
+		// $(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
+		// $(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
+		// $(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">  </div>`);
+		// $(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-empty">-  </div>`);
 
 		let raspEdit = new RaspEdit(rasp); //rasp[cl]
 
@@ -49,6 +56,8 @@
 				}
 			}
 		});
+		console.log(location);
+		//del_in_db();
 
 	} // end of main()
 
@@ -59,15 +68,26 @@ async function save_to_db(rasp_event) {
 	console.log(req_body);
 	// let json_rasp_event = JSON.stringify(rasp_event);
 	// let command = JSON.stringify({ action: 'save'})
-	let response = await fetch('http://raspwp/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+	let response = await fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 	let rasp = await response.json();
 	return rasp_event;
 }
 
+async function del_in_db(db_id) {
+	let response = await fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: db_id }) });
+	// console.log(response);
+	// let rasp = await response.json();
+	return rasp;
+}
+
 async function read_from_db() {
-	let response = await fetch('http://raspwp/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'readd' }) });
+	let response = await fetch('/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
 	let rasp = await response.json();
 	return rasp;
+
+
+
+
 }
 
 class raspEvent {

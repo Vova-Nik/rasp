@@ -25,7 +25,7 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 		wp_die($wpdb->error);
 	//$ans = $args[0];
 	$action = $request['action'];
-	error_log('Request = ' . $request['action']);
+	//error_log('Request = ' . $request['action']);
 
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'rasp_rasp';
@@ -39,6 +39,19 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 	return  $to_page;
 }
 
+function rasp_restAPI_point_del(WP_REST_Request $request)
+{
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'rasp_rasp';
+	$charset_collate = $wpdb->get_charset_collate();
+	if (!empty($wpdb->error))
+		wp_die($wpdb->error);
+	$id = $request['id'];
+	error_log('del function in rasp-admin-display.php  ' . $id);
+	if (is_numeric($id)) {
+		$wpdb->delete( 'wp_rasp_rasp', array( 'id' => $id ) );
+	}
+}
 
 function rasp_restAPI_point_write(WP_REST_Request $request)
 {
