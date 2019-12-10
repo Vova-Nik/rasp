@@ -139,7 +139,7 @@ class RaspEdit {
 					<input type="text" id="form-name" placeholder="Enter event name">
 				</li>
 				<li>
-				<label for="form-place" class="input-label">Description</label>
+				<label for="form-place" class="input-label">Event place</label>
 				<input type="text" id="form-place" placeholder="Event place">
 				</li>
 				<li>

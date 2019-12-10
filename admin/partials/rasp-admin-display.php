@@ -52,9 +52,17 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 
 	if (is_numeric($request['id'])) { 
 		$wpdb->update( 'wp_rasp_rasp', //$data, $where, $data_format=null, $formatwhere=null );
-			array( 'event_name' => $request['event_name'], 'event_place' => $request['event_place'] ),
+			array( 
+				'event_begin_time' => $request['event_begin_time'], //s
+				'event_day_of_week' => $request['event_day_of_week'], //d
+				'event_name' => $request['event_name'], //s
+				'event_place' => $request['event_place'], //s
+				'event_description' => $request['event_description'], //s
+				'event_url' => $request['event_url'], //s
+				'event_show' => $request['event_show'] //d
+			),
 			array( 'ID' => $request['id'] ),
-			array( '%s', '%s' ),
+			array( '%s', '%d', '%s', '%s', '%s', '%s', '%d' ),
 			array( '%d' )
 		);
 		error_log('save in work');
