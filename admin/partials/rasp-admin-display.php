@@ -26,7 +26,6 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 	//$ans = $args[0];
 	$action = $request['action'];
 	//error_log('Request = ' . $request['action']);
-
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'rasp_rasp';
 	$charset_collate = $wpdb->get_charset_collate();
@@ -35,7 +34,7 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 
 	$results = $wpdb->get_results("SELECT * FROM $table_name");
 	$to_page = json_encode($results, JSON_HEX_TAG);
-	//error_log($to_page);
+	error_log('PHP Read');
 	return  $to_page;
 }
 
