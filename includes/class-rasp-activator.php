@@ -62,6 +62,7 @@ class Rasp_Activator
 		  event_url varchar(512) DEFAULT '',
 		  event_category int DEFAULT 0,
 		  event_show bool DEFAULT 1,
+		  unic bigint default 0,
 		  PRIMARY KEY  (id)
 		) $charset_collate;";
 

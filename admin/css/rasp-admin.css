@@ -11,7 +11,7 @@
 }
 .admin-grid-container {
   display: grid;
-  grid-template-columns: 4em 4em 3em 3em 8em auto auto 5em 3em;
+  grid-template-columns: 4em 4em 3em 3em 6em auto auto 5em 3em;
   grid-template-rows: auto;
   grid-template-areas: "action action . . . . . . .";
   /* grid-gap: 2px; */
@@ -61,8 +61,6 @@
   top: 0;
   left: 0;
   width: 100%;
-  /* background-color: violet; */
-  /* height: 100%; */
 }
 
 .edit-area {
@@ -99,9 +97,6 @@
 .edit-area>form {
   opacity: 1;
   background-color: rgb(172, 190, 248);
-  /* margin: 18px;
-       display: flex; */
-       /* opacity: 0; */
 }
 
 /* ***************************  Form ******************************************/
