@@ -1,5 +1,6 @@
 (function ($) {
 	'use strict';
+
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 
 	async function rasp_ready() {
@@ -7,6 +8,9 @@
 		let raspEdit = new RaspEdit(rasp); //rasp[cl]
 		rasp = JSON.parse(rasp);
 		showRasp(rasp, raspEdit);
+		let aa = new RaspEvent();
+		aa.copyEvent(rasp[1]);
+		aa.saveYourself();
 	}
 	/******************************end of main()******************************************* */
 	async function save_to_db(rasp_event) {
@@ -74,60 +78,7 @@
 	}
 
 
-	class raspHolder {
-		constructor(raspObj) {
 
-		}
-
-		addEvent(event) {
-
-		}
-
-		delEvent(num) {
-
-		}
-
-		drawEwent() {
-
-		}
-
-
-	}
-	class raspEvent {
-		constructor(templObj) {
-			if (typeof templObj === "undefined") {
-				this.event_begin_time = '23:59:30';
-				this.event_category = "0";
-				this.event_day_of_week = 0;
-				this.event_description = 'event_description';
-				this.event_end_time = 'event_end_time',
-					this.event_name = 'event_name';
-				this.event_place = 'event_place';
-				this.event_show = 1;
-				this.event_url = 'event_url';
-			}
-			else {
-				if (typeof templObj.event_begin_time === "undefined") this.event_begin_time = '00:00:00';
-				else this.event_begin_time = templObj.event_begin_time;
-				if (typeof templObj.event_category === "undefined") this.event_category = '0';
-				else this.event_category = templObj.event_category;
-				if (typeof templObj.event_day_of_week === "undefined") this.event_day_of_week = 0;
-				else this.event_day_of_week = templObj.event_day_of_week;
-				if (typeof templObj.event_description === "undefined") this.event_description = 'Event Description';
-				else this.event_description = templObj.event_description;
-				if (typeof templObj.event_end_time === "undefined") this.event_end_time = 0;
-				else this.event_end_time = templObj.event_end_time;
-				if (typeof templObj.event_name === "undefined") this.event_name = 'Event Name';
-				else this.event_name = templObj.event_name;
-				if (typeof templObj.event_place === "undefined") this.event_place = 'Event Place';
-				else this.event_place = templObj.event_place;
-				if (typeof templObj.event_show === "undefined") this.event_show = 1;
-				else this.event_show = templObj.event_show;
-				if (typeof templObj.event_url === "undefined") this.event_url = 'Event URL';
-				else this.event_url = templObj.event_url;
-			}
-		}
-	}
 
 	class RaspEdit {
 		constructor(rasp_array) {
@@ -294,6 +245,110 @@
 			$("#form-show").val(this.event.event_show);
 		}
 	}
+
+
+	class RaspView {
+		constructor(rasp_model) {
+			this.raspMododel = new Array();
+		}
+
+	}
+
+	/**************************** RaspViev class END ************************************* */
+
+	class RaspModel {
+		constructor() {
+			this.raspMododel = new Array();
+		}
+
+		addEvent(event) {
+			this.raspMododel.push(event);
+			return this.raspMododel.length;
+		}
+
+		delEvent(num) {
+
+			fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.raspMododel[num].id }) });
+			this.raspMododel.splice(num, 1);
+		}
+
+		drawEwent() {
+
+		}
+	}
+
+	/**************************** RaspModel class END ************************************* */
+
+	class RaspEvent {
+		constructor(templObj) {
+			if (typeof templObj === "undefined") {
+				this.event_begin_time = '23:59:30';
+				this.event_category = "0";
+				this.event_day_of_week = 0;
+				this.event_description = 'event_description';
+				this.event_end_time = 'event_end_time';
+				this.event_name = 'event_name';
+				this.event_place = 'event_place';
+				this.event_show = 1;
+				this.event_url = 'event_url';
+				this.id = '';
+				this.saved = false;
+			}
+		}
+
+		copyEvent(templObj) {
+			this.saved = false;
+			if (typeof templObj.event_begin_time === "undefined") this.event_begin_time = '00:00:00';
+			else this.event_begin_time = templObj.event_begin_time;
+			if (typeof templObj.event_category === "undefined") this.event_category = '0';
+			else this.event_category = templObj.event_category;
+			if (typeof templObj.event_day_of_week === "undefined") this.event_day_of_week = 0;
+			else this.event_day_of_week = templObj.event_day_of_week;
+			if (typeof templObj.event_description === "undefined") this.event_description = 'Event Description';
+			else this.event_description = templObj.event_description;
+			if (typeof templObj.event_end_time === "undefined") this.event_end_time = 0;
+			else this.event_end_time = templObj.event_end_time;
+			if (typeof templObj.event_name === "undefined") this.event_name = 'Event Name';
+			else this.event_name = templObj.event_name;
+			if (typeof templObj.event_place === "undefined") this.event_place = 'Event Place';
+			else this.event_place = templObj.event_place;
+			if (typeof templObj.event_show === "undefined") this.event_show = 1;
+			else this.event_show = templObj.event_show;
+			if (typeof templObj.event_url === "undefined") this.event_url = 'Event URL';
+			else this.event_url = templObj.event_url;
+			this.id = null;
+			this.event_sortier = this.event_day_of_week.stringify + this.event_begin_time[0] + this.event_begin_time[1] + this.event_begin_time[3] + this.event_begin_time[4] + this.event_begin_time[6] + this.event_begin_time[7];
+		}
+
+
+		killYourself() {
+			if(!this.saved)
+				return null;
+			if (!isNaN(this.id))
+				fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.raspMododel[num].id }) });
+			return null;
+		}
+
+		saveYourself() {
+			if (!this.saved) {
+				let req_body = JSON.stringify(this);
+				console.log(req_body);
+				this.id = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+				this.saved = true;
+			}
+		}
+
+		getYorself() {
+			let Ya = {
+
+			}
+		}
+
+		createForm() {
+
+		}
+	}
+	/**************************** RaspEvent class END ************************************* */
 
 })(jQuery);
 
