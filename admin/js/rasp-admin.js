@@ -85,7 +85,7 @@
 		}
 	}
 
-	/********************** RaspView  Class ***************************** */
+	/********************** RaspView  Class *****************************/
 	class RaspView {
 		constructor(raspModel, raspCtrl) {
 			this.rasp_model = raspModel;
