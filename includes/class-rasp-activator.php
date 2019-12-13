@@ -34,18 +34,6 @@ class Rasp_Activator
 	//VVV
 	public static function activate()
 	{
-		//  exit("Activate in" . "\rasp\includes\class-rasp-activator.php");
-		//create_table();
-		// require_once(ABSPATH . 'wp-content\plugins\rasp\admin\partials\rasp-admin-display.php'); // C:\openserver\ospanel\domains\raspwp\wp-content\plugins\rasp\admin\partials\rasp-admin-display.php
-		// add_action('rest_api_init', function () {
-		// 	//register_rest_route('rasp/v1', '/author/(?P<id>\d+)', array(
-		// 	register_rest_route('rasp/v1', '/author/', array(
-		// 		'methods' => 'GET',
-		// 		'callback' => 'rasp_get_data',
-		// 	));
-		// });
-
-		//http://raspwp/wp-json/rasp/v1/author/(?P\d+).
 
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'rasp_rasp';
@@ -80,73 +68,6 @@ class Rasp_Activator
 			array('%s', '%s', '%s', '%d')
 		);
 
-		$wpdb->insert(
-			'wp_rasp_rasp',
-			array(
-				'event_name' => 'Meeting Stupi',   //s
-				'event_begin_time' => '19:00',	//s
-				'event_place' => 'Ицхака Рабина 7', //s
-				'event_day_of_week' => '1' //d
-			),
-			array('%s', '%s', '%s', '%d')
-		);
-
-		$wpdb->insert(
-			'wp_rasp_rasp',
-			array(
-				'event_name' => "Meeting PosKOt",
-				'event_begin_time' => '18:00',	//s
-				'event_place' => 'Канатная 28', //s
-				'event_day_of_week' => '3', //d
-				'event_url' => "https://www.w3schools.com"
-			),
-			array('%s', '%s', '%s', '%d', '%s')
-		);
-
-		$wpdb->insert(
-			'wp_rasp_rasp',
-			array(
-				'event_name' => 'Meeting Sofi',   //s
-				'event_begin_time' => '19:00',	//s
-				'event_place' => 'Канатная 28', //s
-				'event_day_of_week' => '2', //d
-				'event_url' => "https://www.w3schools.com" //s
-			),
-			array('%s', '%s', '%s', '%d', '%s')
-		);
-
-		$wpdb->insert(
-			'wp_rasp_rasp',
-			array(
-				'event_name' => 'Meeting Sofi',   //s
-				'event_begin_time' => '19:00',	//s
-				'event_place' => 'Канатная 28', //s
-				'event_day_of_week' => '4' //d
-			),
-			array('%s', '%s', '%s', '%d')
-		);
-
-		$wpdb->insert(
-			'wp_rasp_rasp',
-			array(
-				'event_name' => 'Rassvet',   //s
-				'event_begin_time' => '12:00',	//s
-				'event_place' => 'Ицхака рабина 7 (РЦ Ступени 2 эт)', //s
-				'event_day_of_week' => '1' //d
-			),
-			array('%s', '%s', '%s', '%d')
-		);
-
-		$wpdb->insert(
-			'wp_rasp_rasp',
-			array(
-				'event_name' => 'Rassvet',   //s
-				'event_begin_time' => '12:00',	//s
-				'event_place' => 'Ицхака рабина 7 (РЦ Ступени 2 эт)', //s
-				'event_day_of_week' => '6' //d
-			),
-			array('%s', '%s', '%s', '%d')
-		);
 	}
 
 	public function __toString()

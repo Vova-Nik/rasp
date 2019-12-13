@@ -105,7 +105,6 @@ class Rasp_Loader {
 		);
 
 		return $hooks;
-
 	}
 
 	/**
@@ -117,25 +116,16 @@ class Rasp_Loader {
 
 		foreach ( $this->filters as $hook ) {
 			add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
-			//error_log( $hook['hook'] . $hook['callback']);
-			//error_log( 'callback');
-			//error_log('VVV filters - ' . $hook['callback'] . __FILE__ . ' ' .  __LINE__ );
 		}
 
 		foreach ( $this->actions as $hook ) {
 
 			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
-			//error_log('Actions - ' . ' hook ' . $hook['hook'] . ' hook comp ' . $hook['component'] . ' hook callback ' . $hook['callback']);
-			//$vvv = $hook['component'] -> __toString();
-			//error_log('Actions - ' . ' hook ' . $hook['hook'] . ' hook component - ' . $vvv . ' hook callback  - ' . $hook['callback']);  //(string)$hook['component'] . 
 			
 		}
-		//$dmp = var_dump($this->filters);
 	}
 		public function __toString()
 		{
 				return 'class Rasp_Loader';
 		}
-
-
 }

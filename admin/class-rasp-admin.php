@@ -93,6 +93,15 @@ class Rasp_Admin
 				'args' => array(),
 			));
 		});
+
+		add_action('rest_api_init', function () {
+			register_rest_route('rasp/v1', '/raspfile', 
+			array(
+				'methods' => 'POST',
+				'callback' => 'rasp_restAPI_point_file',
+				'args' => array(),
+			));
+		});
 	}
 
 	/**VVV

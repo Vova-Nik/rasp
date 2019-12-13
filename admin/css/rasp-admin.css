@@ -11,9 +11,10 @@
 }
 .admin-grid-container {
   display: grid;
-  grid-template-columns: 4em 4em 3em 3em 6em auto auto 5em 3em;
-  grid-template-rows: auto;
-  grid-template-areas: "action action . . . . . . .";
+  /* grid-template-columns: [edit btn] 1fr [copy_btn] 1fr [id] 1fr [day] 1fr [time] 1fr [name] auto [place] auto [desc] auto [url] auto [show_yn] 1fr [del_btn] 1fr; */
+  grid-template-columns: [edit btn] 3em [copy_btn] 3em [id] 2em [day] 3em [time] 4em [name] auto [place] auto [desc] auto [url] 10% [show_yn] 4em [del_btn] 3em;
+  /* grid-template-rows: auto; */
+  grid-template-areas: "action action . . . . . . . . .";
   /* grid-gap: 2px; */
   background-color: #ababad;
   padding: 1px;
@@ -112,13 +113,6 @@
   opacity: 1;
 }
 
-/* .flex-outer li{
-  display: flex;
-  flex-wrap: wrap; 
-  align-items: center;
-} */
-
-
 .flex-outer>li:not(:last-child) {
   margin-bottom: 20px;
 }
@@ -151,4 +145,20 @@
 .form-btn:hover {
   background-color: #3f3fe7;
   cursor: pointer;
+}
+
+/* ***************************  Separate buttons ******************************************/
+
+.file_act_button {
+  background-color: #bebef8;
+  margin: 16 px;
+  text-align: center;
+  /* vertical-align: center; */
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+  border: solid black 1px;
+}
+.file_act_button:hover{
+  background-color: rgba(24, 238, 174, 0.99);
 }

@@ -177,28 +177,9 @@ class Rasp {
 	 */
 	public function run() {
 		$this->loader->run();
-		//error_log('$this->loader->run()');
-		// if($_SERVER['REQUEST_METHOD']=="POST"){
-		// 	$this->postProcess($_POST);
-		// }
 	}
 	
-	//  public function postProcess($post)
-	//  {
-	// 	 if(isset($post[action]) && $post[action] == "import"){
-	// 		 $this->import();
-	// 	 }
-	//  }
 
-	//  public function import(){
-	// 	 $obj = new WPImportCustom();
-	// 	 $obj->rasp_import();
-	// 	 //exit("Class-rasp.php import()" );  //2 ghbikf
-	//  }
-
-	 /*VVV
-	 *
-	 * */
 
 	/**
 	 * The name of the plugin used to uniquely identify it within the context of

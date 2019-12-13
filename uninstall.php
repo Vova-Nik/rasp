@@ -28,8 +28,16 @@
 // If uninstall not called from WordPress, then exit.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit('Uninstal.php executed !defined');
+	error_log("Plugin RASP has not delewted ((((");
 }
 else{
+	global $wpdb;
+	$table_name = "wp_rasp_rasp";
+	$sql = "DROP TABLE IF EXISTS $table_name;";
+	$wpdb->query($sql);
+	delete_option("my_plugin_db_version");
 	exit('Uninstal.php executed else');
+
+	error_log("Plugin RASP HB delewted");
 }
 
