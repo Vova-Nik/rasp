@@ -116,16 +116,10 @@ class Rasp_Admin
 			"rasp-options",
 			array($this, 'render')
 		);
-
-		/**VVV
-		 * page of plugin settings
-
-		 */
 	}
 	public function render()
 	{
-		//require_once plugin_dir_path(dirname(__FILE__)) . '/admin/partials/rasp-admin-display.php';
-		display_frame();
+			display_frame();
 	}
 
 	/**

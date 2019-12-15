@@ -58,13 +58,12 @@
 		}
 
 		async saveBtnInFormCopy(selfRef, numOfEvent) {
-			//debugger;
-			console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
+			//console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
 			let req_body = JSON.stringify(selfRef.raspModel.getArr()[numOfEvent]);
-			console.log(req_body);
+			//console.log(req_body);
 			let response = await fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 			let resp = await response.json();
-			console.log(resp);
+			console.log(resp, numOfEvent);
 			//save_to_db(req_body);
 			//selfRef.raspView.updateView();
 		}
@@ -74,17 +73,50 @@
 			selfRef.raspView.updateView();
 		}
 
-		fileBtn(){
-			//let aa = $('btn_save');
+		fileBtn() {
 			$(".file_act_button").on("click", function (element) {
-				console.log('file button', element);
-				console.log(element.originalEvent.path[0]); //,  .classList[0]);
+				let btn_functionality = element.originalEvent.path[0].className;
+				//console.log(btn_functionality); //,  .classList[0]);
+				if (btn_functionality.includes('save')) {
+					//console.log("Catched Ok");
+					fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'save' }) });
+				}
+				if (btn_functionality.includes('load'))
+					fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'load' }) });
 
+				if (btn_functionality.includes('download'))
+					window.open('/wp-content/plugins/rasp/rasp_data.txt');
 			});
+		}
 
+		sortBtn() {
+			$('.admin-grid-container-div-th').on("click", function (element) {
+
+				let btn_functionality = element.originalEvent.path[0].className;
+				console.log(btn_functionality); //,  .classList[0]);
+				if (btn_functionality.includes('th-day-col')) {
+					console.log("Catched day");
+					this.raspModel.sortByDay();
+					this.raspView.updateView();
+				}
+				if (btn_functionality.includes('th-time-col')) {
+					console.log("Catched time");
+					this.raspModel.sortByTime();
+					this.raspView.updateView();
+				}
+				if (btn_functionality.includes('th-name-col')) {
+					console.log("Catched name");
+					this.raspModel.sortByName();
+					this.raspView.updateView();
+				}
+				if (btn_functionality.includes('th-place-col')) {
+					console.log("Catched place");
+					this.raspModel.sortByPlace();
+					this.raspView.updateView();
+				}
+			}.bind(this));
 		}
 	}
-
 	/********************** RaspView  Class *****************************/
 	class RaspView {
 		constructor(raspModel, raspCtrl) {
@@ -100,14 +132,14 @@
 			//		debugger;
 			$(".admin-grid-container").append(`
 			<div  class="admin-grid-container-div-th grid-act">Action</div>
-			<div  class="admin-grid-container-div-th ">Id</div>
-			<div  class="admin-grid-container-div-th">Day</div>
-			<div  class="admin-grid-container-div-th">Time</div>
-			<div  class="admin-grid-container-div-th">Name</div>
-			<div  class="admin-grid-container-div-th">Place</div>
-			<div  class="admin-grid-container-div-th">Description</div>
-			<div  class="admin-grid-container-div-th">URL</div>
-			<div  class="admin-grid-container-div-th">Show</div>
+			<div  class="admin-grid-container-div-th th-id-col">Id</div>
+			<div  class="admin-grid-container-div-th th-day-col">Day</div>
+			<div  class="admin-grid-container-div-th th-time-col">Time</div>
+			<div  class="admin-grid-container-div-th th-name-col">Name</div>
+			<div  class="admin-grid-container-div-th th-place-col">Place</div>
+			<div  class="admin-grid-container-div-th th-description-col">Description</div>
+			<div  class="admin-grid-container-div-th th-URL-col">URL</div>
+			<div  class="admin-grid-container-div-th th-show_col">Show</div>
 			<div  class="admin-grid-container-div-th">Del</div>	
 			`);  //Header of table
 
@@ -138,29 +170,20 @@
 				}).bind(thisRaspController, i);
 			});
 
-			$("#wpbody-content").append(`
+			$(".container").append(`
 			<div  class="file_act_button btn_save">Save to File</div>
 			<div  class="file_act_button btn_load">Load from File</div>
+			<div  class="file_act_button btn_download">Download File</div>
 			`);
 			this.rasp_controller.fileBtn();
-			// let aa = $('btn_save');
-			// console.log('Save button init', aa);
-
-			// function zam(trc){
-			// 	return function(trc){
-			// 		return trc;
-			// 	}
-			// }
-
-			// let aa = zam(this.rasp_controller);
-
+			this.rasp_controller.sortBtn();
 
 
 		}
 
 		createForm(numOfEvent) {
 			$('#wpbody-content').append('<div class="edit-area"></div>');
-			
+
 			{					/********************** HTML for FORM******************************** */
 				$('.edit-area').append(`
 				<form id = "rasp-form">
@@ -284,7 +307,7 @@
 	}
 
 
-	/**************************** RaspModel Class ************************************* */
+	/**************************** RaspModel Class *******************************/
 	class RaspModel {
 		constructor(rasp) {
 			this.raspMod = new Array();
@@ -322,9 +345,111 @@
 			//fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.raspMododel[num].id }) });
 			this.raspMod.splice(num, 1);
 		}
+
+		sortByDay() {
+			this.raspMod.sort(function (a, b) {
+				if (a.event_day_of_week > b.event_day_of_week) {
+					return 1;
+				}
+				if (a.event_day_of_week < b.event_day_of_week) {
+					return -1;
+				}
+				if (a.event_begin_time > b.event_begin_time) {
+					return 1;
+				}
+				if (a.event_begin_time < b.event_begin_time) {
+					return -1;
+				}
+				if (a.event_name > b.event_name) {
+					return 1;
+				}
+				if (a.event_name < b.event_name) {
+					return -1;
+				}
+				return 0;
+			});
+		}
+
+		sortByTime() {
+			this.raspMod.sort(function (a, b) {
+				if (a.event_begin_time > b.event_begin_time) {
+					return 1;
+				}
+				if (a.event_begin_time < b.event_begin_time) {
+					return -1;
+				}
+				if (a.event_day_of_week > b.event_day_of_week) {
+					return 1;
+				}
+				if (a.event_day_of_week < b.event_day_of_week) {
+					return -1;
+				}
+				if (a.event_name > b.event_name) {
+					return 1;
+				}
+				if (a.event_name < b.event_name) {
+					return -1;
+				}
+				return 0;
+			});
+		}
+
+		sortByName() {
+			this.raspMod.sort(function (a, b) {
+				if (a.event_name > b.event_name) {
+					return 1;
+				}
+				if (a.event_name < b.event_name) {
+					return -1;
+				}
+				if (a.event_day_of_week > b.event_day_of_week) {
+					return 1;
+				}
+				if (a.event_day_of_week < b.event_day_of_week) {
+					return -1;
+				}
+				if (a.event_begin_time > b.event_begin_time) {
+					return 1;
+				}
+				if (a.event_begin_time < b.event_begin_time) {
+					return -1;
+				}
+				return 0;
+			});
+		}
+
+			sortByPlace() {
+				this.raspMod.sort(function (a, b) {
+					if (a.event_place > b.event_place) {
+						return 1;
+					}
+					if (a.event_place < b.event_place) {
+						return -1;
+					}
+					if (a.event_name > b.event_name) {
+						return 1;
+					}
+					if (a.event_name < b.event_name) {
+						return -1;
+					}
+					if (a.event_day_of_week > b.event_day_of_week) {
+						return 1;
+					}
+					if (a.event_day_of_week < b.event_day_of_week) {
+						return -1;
+					}
+					if (a.event_begin_time > b.event_begin_time) {
+						return 1;
+					}
+					if (a.event_begin_time < b.event_begin_time) {
+						return -1;
+					}
+					return 0;
+				});
+		}
 	}
 
-	/**************************** RaspEvent Class************************************* */
+	/**************************** RaspEvent Class*************************************/
 	class RaspEvent {
 		constructor() {
 			this.event_begin_time = '23:59:30';
@@ -349,7 +474,7 @@
 			this.event_end_time = eventObj.event_end_time;
 			this.event_name = eventObj.event_name;
 			this.event_place = eventObj.event_place;
-			this.event_show = eventObj.event_show ;
+			this.event_show = eventObj.event_show;
 			this.event_url = eventObj.event_url;
 			this.id = eventObj.id;
 			this.saved = eventObj.saved;
@@ -388,7 +513,7 @@
 			return this;
 		}
 
-		createId(numInArr){
+		createId(numInArr) {
 			return this.date.getTime() + numInArr;
 		}
 
@@ -420,7 +545,7 @@
 
 		}
 	}
-	/**************************** RaspEvent class END ************************************* */
+	/**************************** RaspEvent class END **************************************/
 
 })(jQuery);
 

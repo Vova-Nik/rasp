@@ -23,18 +23,9 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 	$charset_collate = $wpdb->get_charset_collate();
 	if (!empty($wpdb->error))
 		wp_die($wpdb->error);
-	//$ans = $args[0];
-	$action = $request['action'];
-	//error_log('Request = ' . $request['action']);
-	global $wpdb;
-	$table_name = $wpdb->prefix . 'rasp_rasp';
-	$charset_collate = $wpdb->get_charset_collate();
-	if (!empty($wpdb->error))
-		wp_die($wpdb->error);
-
 	$results = $wpdb->get_results("SELECT * FROM $table_name");
 	$to_page = json_encode($results, JSON_HEX_TAG);
-	error_log('PHP Read');
+	// error_log('PHP Read');
 	return  $to_page;
 }
 
@@ -46,9 +37,9 @@ function rasp_restAPI_point_del(WP_REST_Request $request)
 	if (!empty($wpdb->error))
 		wp_die($wpdb->error);
 	$id = $request['id'];
-	error_log('del function in rasp-admin-display.php  ' . $id);
+	// error_log('del function in rasp-admin-display.php  ' . $id);
 	if (is_numeric($id)) {
-		$wpdb->delete( 'wp_rasp_rasp', array( 'id' => $id ) );
+		$wpdb->delete('wp_rasp_rasp', array('id' => $id));
 	}
 }
 
@@ -61,11 +52,12 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 		wp_die($wpdb->error);
 	//$ans = $args[0];
 	// $action = $request['action'];
-	$vvv = $request->get_body();
-	error_log('copy1 (insert)  in work. Request = '. $vvv);
-	if (is_numeric($request['id'])) { 
-		$wpdb->update( 'wp_rasp_rasp', //$data, $where, $data_format=null, $formatwhere=null );
-			array( 
+	// $vvv = $request->get_body();
+	// error_log('copy1 (insert)  in work. Request = ' . $vvv);
+	if (is_numeric($request['id'])) {
+		$wpdb->update(
+			'wp_rasp_rasp', //$data, $where, $data_format=null, $formatwhere=null );
+			array(
 				'event_begin_time' => $request['event_begin_time'], //s
 				'event_day_of_week' => $request['event_day_of_week'], //d
 				'event_name' => $request['event_name'], //s
@@ -75,13 +67,12 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 				'event_show' => $request['event_show'], //d
 				'unic' => $request['unicId'] //d
 			),
-			array( 'ID' => $request['id'] ),
-			array( '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d' ),
-			array( '%d' )
+			array('ID' => $request['id']),
+			array('%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d'),
+			array('%d')
 		);
 		error_log('save in work');
-	} 
-	else {
+	} else {
 		$wpdb->insert(
 			'wp_rasp_rasp',
 			array(
@@ -96,18 +87,19 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 			),
 			array('%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d')
 		);
-		
 	}
-	// error_log($request['id']);
-	// error_log($request['event_begin_time']);
-
 	$current_unic = $request['unicId'];
 	$sql = "SELECT * FROM $table_name WHERE unic = $current_unic";
-	//esc_sql($sql);
+	esc_sql($sql);
 	$results = $wpdb->get_results($sql);
-	error_log("Write results  " . $results[0]->id);
-	return $results[0]->id;
+	$to_page = json_encode($results, JSON_HEX_TAG);
+	// error_log($to_page);
+	// $inserted_row_id = $results[0]->id;
+	// error_log($inserted_row_id);
+
+	return $to_page;
 }
+
 
 function rasp_restAPI_point_file(WP_REST_Request $request)
 {
@@ -116,10 +108,71 @@ function rasp_restAPI_point_file(WP_REST_Request $request)
 	$charset_collate = $wpdb->get_charset_collate();
 	if (!empty($wpdb->error))
 		wp_die($wpdb->error);
-	$action = $request['act'];
-	error_log('file function  ' . $id);
-	// if (is_numeric($id)) {
-	// 	$wpdb->delete( 'wp_rasp_rasp', array( 'id' => $id ) );
-	// }
-}
+	$action = $request['action'];   //load or save
 
+
+	/************************Write file**************************************** */
+	if ($action == 'save') {
+
+		$results = $wpdb->get_results("SELECT * FROM $table_name");
+		//	 $to_page = json_encode($results, JSON_HEX_TAG);
+		$ToFile = array();
+		foreach ($results as $key => $value) {
+			$ToFile[$key] = (array) $value; //		error_log('Field =  ' .);
+		}
+
+		//C:\openserver\ospanel\domains\raspwp\wp-content\plugins\rasp\admin
+		//$fp = fopen('/\wp-content/\plugins/\rasp/\admin/\rasp_data.csv', 'w');
+		// $fp = fopen('rasp_data.csv', 'w');
+		// error_log('File handler for  sawing =  ' . $fp);
+		// foreach ($ToFile as $fields) {
+		// //foreach ($results as $fields) {
+		// 	fputcsv($fp, $fields);
+		// }
+		// fclose($fp);
+
+		$handler = fopen("wp-content/plugins/rasp/rasp_data.txt", 'w');
+		error_log('File handler for  sawing =  ' . $handler);
+		$to_page = json_encode($results, JSON_HEX_TAG);
+		fwrite($handler, $to_page);
+		fclose($handler);
+		return;
+	}
+
+	if ($action == 'load') {
+		$handler = fopen("wp-content/plugins/rasp/rasp_data.txt", 'r');
+			if (($handler = fopen("wp-content/plugins/rasp/rasp_data.txt", "r")) !== FALSE) {
+			$results = $wpdb->get_results("SELECT * FROM $table_name", ARRAY_A);
+			foreach ($results as $field)
+			{
+				//error_log(json_encode($field, JSON_HEX_TAG));
+				$id = $field['id'];
+				error_log($id);
+				$wpdb->delete( 'wp_rasp_rasp', array( 'id' => $id), array('%d'));
+			}
+			$data = fread($handler,filesize("wp-content/plugins/rasp/rasp_data.txt"));
+			fclose($handler);
+			// error_log('Data loaded =  ' . $data);
+			$loadedFileObj = json_decode($data);
+			foreach($loadedFileObj as $ind => $rec)
+			{
+				//error_log(json_encode($rec, JSON_HEX_TAG));
+				$rec_array = (array)$rec;
+				$wpdb->insert(
+					'wp_rasp_rasp',
+					array(
+						'event_begin_time' => $rec_array['event_begin_time'],
+						'event_day_of_week' => $rec_array['event_day_of_week'], 	//d
+						'event_name' => $rec_array['event_name'],		//s
+						'event_place' => $rec_array['event_place'],	 //s
+						'event_description' => $rec_array['event_description'], 	//s
+						'event_url' => $rec_array['event_url'], 	//s
+						'event_show' => $rec_array['event_show'], 	//d
+						'unic' => $rec_array['unic'] //d
+					),
+					array('%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d')
+				);
+			}
+	}
+}
+}
