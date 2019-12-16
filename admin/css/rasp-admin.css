@@ -43,6 +43,10 @@
   overflow: hidden;
 }
 
+.admin-grid-container:nth-child(2n){
+  background-color: rgba(167, 172, 248, 0.99);
+}
+
 .admin-grid-container-div-btn {
   background-color: rgba(199, 252, 236, 0.99);
   margin: 1px;
@@ -74,7 +78,7 @@
   width: 46%;
   height: auto;
   background-color: rgb(172, 190, 248);
-  opacity: .2;
+  /* opacity: 1; */
   border: 4px solid black;
   border-radius: 8px;
   -webkit-box-shadow: 5px 5px 5px 0px #0F0699;
@@ -82,14 +86,14 @@
   color: black;
   padding: 20px;
   z-index: 2;
-  transition: 1s;
+  /* transition: 1s; */
 }
-.edit-area:hover {
+/* .edit-area:hover {
   opacity: 1;
-}
+} */
 
 .edit-area>div {
-  opacity: 0.5;
+  opacity: 1;
   background-color: white;
   width: 20%;
   margin: 8px;
@@ -108,11 +112,11 @@
   padding: 0;
   max-width: 880px;
   margin: 0 auto;
-  opacity: 0.1;
+  /* opacity: 0.1; */
 }
-.flex-outer:hover {
+/* .flex-outer:hover {
   opacity: 1;
-}
+} */
 
 .flex-outer>li:not(:last-child) {
   margin-bottom: 20px;

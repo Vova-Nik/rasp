@@ -114,6 +114,11 @@
 					this.raspModel.sortByPlace();
 					this.raspView.updateView();
 				}
+				if (btn_functionality.includes('th-show_col')) {
+					console.log("Catched show");
+					this.raspModel.sortByShow();
+					this.raspView.updateView();
+				}
 			}.bind(this));
 		}
 	}
@@ -214,7 +219,7 @@
 						</li>
 						<li>
 						<label for="form-show" class="input-label">1-show, 0-hide</label>
-						<input type="number" id="form-show" min="0" max="1" placeholder="">
+						<input type="number" id="form-show" min="0" max="128" placeholder="">
 						</li>
 						<li>
 						<div id = "form_btn_save" class = 'form-btn'>Save</div>
@@ -223,11 +228,7 @@
 				</form
 				`);
 			}
-
 			$('.edit-area').css('display', 'none');
-
-			this.btn_save = document.querySelector("#form_btn_save");
-
 		}
 
 		showForm(numOfEvent) {
@@ -244,16 +245,18 @@
 
 			$('.edit-area').css('display', 'block');
 
+			this.btn_save = document.querySelector("#form_btn_save");
+
 			////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			let this_Rasp_Model = this.rasp_model;
-			let this_ = this;
+			//let this_Rasp_Model = this.rasp_model;
+			//let this_ = this;
 
 			this.btn_save.onclick = function () {
-				console.log('btn save on click in form callback!');
+				//console.log('btn save on click in form callback!');
 				$('.edit-area').css('display', 'none');
 				//this_.Rasp_Model.is_activated = false;
-				this_.rasp_model.is_activated = false;
+				this.rasp_model.is_activated = false;
 
 				{				//form submiting
 					let time = $('#form-time').val();
@@ -279,7 +282,7 @@
 					if (ts < 10) ts = '0' + ts;
 					else ts = '' + ts;
 
-					this_.rasp_model.getEvent(numOfEvent).event_begin_time = th + ':' + tm + ':' + ts;
+					this.rasp_model.getEvent(numOfEvent).event_begin_time = th + ':' + tm + ':' + ts;
 
 					let dofw = $('#form-day').val();
 					jQuery.trim(time);
@@ -287,21 +290,21 @@
 					if (isNaN(dofw)) dofw = 0;
 					if (dofw < 0) dofw = 0;
 					if (dofw > 6) dofw = dofw % 7;
-					this_.rasp_model.getEvent(numOfEvent).event_day_of_week = dofw;
+					this.rasp_model.getEvent(numOfEvent).event_day_of_week = dofw;
 
-					this_.rasp_model.getEvent(numOfEvent).event_name = $('#form-name').val();
-					this_.rasp_model.getEvent(numOfEvent).event_place = $('#form-place').val();
-					this_.rasp_model.getEvent(numOfEvent).event_description = $('#form-description').val();
-					this_.rasp_model.getEvent(numOfEvent).event_url = $('#form-url').val();
+					this.rasp_model.getEvent(numOfEvent).event_name = $('#form-name').val();
+					this.rasp_model.getEvent(numOfEvent).event_place = $('#form-place').val();
+					this.rasp_model.getEvent(numOfEvent).event_description = $('#form-description').val();
+					this.rasp_model.getEvent(numOfEvent).event_url = $('#form-url').val();
 
 					let sh = $('#form-show').val();
-					if (sh != 0) sh = 1;
-					this_.rasp_model.getEvent(numOfEvent).event_show = sh;
+					//if (sh != 0) sh = 1;
+					this.rasp_model.getEvent(numOfEvent).event_show = sh;
 				}
-				this_.is_activated = false;
-				this_.updateView();
-				this_.rasp_controller.saveBtnInFormCopy(this_.rasp_controller, numOfEvent);
-			}.bind(this_, numOfEvent);
+				this.is_activated = false;
+				this.updateView();
+				this.rasp_controller.saveBtnInFormCopy(this.rasp_controller, numOfEvent);
+			}.bind(this, numOfEvent);
 			////////////////////////////////////////////////////////////////////////////////////
 		}
 	}
@@ -447,6 +450,18 @@
 					return 0;
 				});
 		}
+
+		sortByShow() {
+			this.raspMod.sort(function (a, b) {
+				if (a.event_show > b.event_show) {
+					return 1;
+				}
+				if (a.event_show < b.event_show) {
+					return -1;
+				}
+				return 0;
+			});
+	}
 	}
 
 	/**************************** RaspEvent Class*************************************/
@@ -533,16 +548,6 @@
 				this.id = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 				this.saved = true;
 			}
-		}
-
-		getYorself() {
-			let Ya = {
-
-			}
-		}
-
-		createForm() {
-
 		}
 	}
 	/**************************** RaspEvent class END **************************************/

@@ -16,7 +16,7 @@
 		
 		for (let i = 0; i < events_list.length; i++) {
 			events_list_array[i] = JSON.parse(events_list[i].textContent);
-			console.log(events_list_array[i]);
+		//	console.log(events_list_array[i]);
 		}
 		events_list = null;
 		/**------------------------------------------------------- */
@@ -142,8 +142,9 @@
 		}
 
 		get DisplayName() {
-			return this.event_data.e_name;
+			return `<a href = "${this.event_data.e_url}">${this.event_data.e_name}</a>`;
 		}
+		
 		get DisplayPlace() {
 			return this.event_data.e_place;
 		}
