@@ -50,10 +50,7 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 	$charset_collate = $wpdb->get_charset_collate();
 	if (!empty($wpdb->error))
 		wp_die($wpdb->error);
-	//$ans = $args[0];
-	// $action = $request['action'];
-	// $vvv = $request->get_body();
-	// error_log('copy1 (insert)  in work. Request = ' . $vvv);
+	/* If there is id - change this record in DB, if no create new record*/
 	if (is_numeric($request['id'])) {
 		$wpdb->update(
 			'wp_rasp_rasp', //$data, $where, $data_format=null, $formatwhere=null );
@@ -71,7 +68,7 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 			array('%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d'),
 			array('%d')
 		);
-		error_log('save in work');
+		error_log('Update (Edit)');
 	} else {
 		$wpdb->insert(
 			'wp_rasp_rasp',
@@ -87,16 +84,13 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 			),
 			array('%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d')
 		);
+		error_log('inserted (copy)');
 	}
 	$current_unic = $request['unicId'];
 	$sql = "SELECT * FROM $table_name WHERE unic = $current_unic";
 	esc_sql($sql);
 	$results = $wpdb->get_results($sql);
 	$to_page = json_encode($results, JSON_HEX_TAG);
-	// error_log($to_page);
-	// $inserted_row_id = $results[0]->id;
-	// error_log($inserted_row_id);
-
 	return $to_page;
 }
 
@@ -120,16 +114,6 @@ function rasp_restAPI_point_file(WP_REST_Request $request)
 		foreach ($results as $key => $value) {
 			$ToFile[$key] = (array) $value; //		error_log('Field =  ' .);
 		}
-
-		//C:\openserver\ospanel\domains\raspwp\wp-content\plugins\rasp\admin
-		//$fp = fopen('/\wp-content/\plugins/\rasp/\admin/\rasp_data.csv', 'w');
-		// $fp = fopen('rasp_data.csv', 'w');
-		// error_log('File handler for  sawing =  ' . $fp);
-		// foreach ($ToFile as $fields) {
-		// //foreach ($results as $fields) {
-		// 	fputcsv($fp, $fields);
-		// }
-		// fclose($fp);
 
 		$handler = fopen("wp-content/plugins/rasp/rasp_data.txt", 'w');
 		error_log('File handler for  sawing =  ' . $handler);

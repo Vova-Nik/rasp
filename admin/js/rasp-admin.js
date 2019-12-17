@@ -60,12 +60,13 @@
 		async saveBtnInFormCopy(selfRef, numOfEvent) {
 			//console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
 			let req_body = JSON.stringify(selfRef.raspModel.getArr()[numOfEvent]);
-			//console.log(req_body);
 			let response = await fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 			let resp = await response.json();
-			console.log(resp, numOfEvent);
-			//save_to_db(req_body);
-			//selfRef.raspView.updateView();
+			resp = JSON.parse(resp);
+			//console.log(resp, numOfEvent, resp[0].id);
+			let ev = selfRef.raspModel.getEvent(numOfEvent);
+			ev.id = parseInt(resp[0].id);
+			console.log(ev);
 		}
 
 		delBtn(selfRef, numOfEvent) {
@@ -95,7 +96,6 @@
 				let btn_functionality = element.originalEvent.path[0].className;
 				console.log(btn_functionality); //,  .classList[0]);
 				if (btn_functionality.includes('th-day-col')) {
-					console.log("Catched day");
 					this.raspModel.sortByDay();
 					this.raspView.updateView();
 				}
@@ -160,7 +160,9 @@
 				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_url} </div>`);
 				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_show} </div>`);
 				$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn del-btn agcd-row${i}">Del</div>`);
-
+				if(i % 2 == 1){
+					$(`.agcd-row${i}`).css('opacity', '.8'); 
+				}
 				let thisRaspController = this.rasp_controller;
 				$(`.edit-btn.agcd-row${i}`).on("click", function (element) {
 					thisRaspController.editBtn(thisRaspController, i);
@@ -174,6 +176,8 @@
 					thisRaspController.delBtn(thisRaspController, i);
 				}).bind(thisRaspController, i);
 			});
+			
+			//$(`.agcd-row1`).css({color:'red', fontSize:'14px', });
 
 			$(".container").append(`
 			<div  class="file_act_button btn_save">Save to File</div>
