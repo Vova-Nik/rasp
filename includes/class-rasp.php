@@ -117,7 +117,8 @@ class Rasp {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-rasp-public.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public\partials\rasp-public-display.php';
+		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public\partials\rasp-public-display.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/rasp-public-display.php';
 
 		$this->loader = new Rasp_Loader();
 	}
@@ -214,3 +215,26 @@ class Rasp {
 	}
 
 }
+
+/*
+
+Deprecated: Methods with the same name as their class will not be constructors in a future version of PHP; dc_jqmegamenu has a deprecated constructor in /virt/homes/aa-odessa/htdocs/wp-content/plugins/jquery-mega-menu/dcwp_jquery_mega_menu.php on line 14
+
+Deprecated: Methods with the same name as their class will not be constructors in a future version of PHP; dc_jqmegamenu_widget has a deprecated constructor in /virt/homes/aa-odessa/htdocs/wp-content/plugins/jquery-mega-menu/dcwp_jquery_mega_menu_widget.php on line 3
+
+Deprecated: Function create_function() is deprecated in /virt/homes/aa-odessa/htdocs/wp-content/plugins/jquery-mega-menu/dcwp_jquery_mega_menu.php on line 58
+
+Deprecated: Function create_function() is deprecated in /virt/homes/aa-odessa/htdocs/wp-content/plugins/wp-miniaudioplayer/inc/popup.php on line 87
+
+Notice: Вызванный метод конструктора класса WP_Widget в dc_jqmegamenu_widget считается устаревшим с версии 4.3.0! Используйте
+__construct()
+. in /virt/homes/aa-odessa/htdocs/wp-includes/functions.php on line 4716
+
+Notice: Вызванный метод конструктора класса WP_Widget в dc_jqmegamenu_widget считается устаревшим с версии 4.3.0! Используйте
+__construct()
+. in /virt/homes/aa-odessa/htdocs/wp-includes/functions.php on line 4716
+
+Warning: require_once(/virt/homes/aa-odessa/htdocs/wp-content/plugins/rasp/public\partials\rasp-public-display.php): failed to open stream: No such file or directory in /virt/homes/aa-odessa/htdocs/wp-content/plugins/rasp/includes/class-rasp.php on line 120
+
+Fatal error: require_once(): Failed opening required '/virt/homes/aa-odessa/htdocs/wp-content/plugins/rasp/public\partials\rasp-public-display.php' (include_path='.:/usr/local/share/pear') in /virt/homes/aa-odessa/htdocs/wp-content/plugins/rasp/includes/class-rasp.php on line 120
+*/

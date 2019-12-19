@@ -51,6 +51,9 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 	if (!empty($wpdb->error))
 		wp_die($wpdb->error);
 	/* If there is id - change this record in DB, if no create new record*/
+	
+	$intID = intval($request['id']);
+	error_log('Saving to DB ' . $intID);
 	if (is_numeric($request['id'])) {
 		$wpdb->update(
 			'wp_rasp_rasp', //$data, $where, $data_format=null, $formatwhere=null );
@@ -131,7 +134,7 @@ function rasp_restAPI_point_file(WP_REST_Request $request)
 			{
 				//error_log(json_encode($field, JSON_HEX_TAG));
 				$id = $field['id'];
-				error_log($id);
+				//error_log($id);
 				$wpdb->delete( 'wp_rasp_rasp', array( 'id' => $id), array('%d'));
 			}
 			$data = fread($handler,filesize("wp-content/plugins/rasp/rasp_data.txt"));

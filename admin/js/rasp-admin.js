@@ -37,36 +37,31 @@
 		return rasp;
 	}
 
-
 	/******************RaspController************************* */
 	class RaspController {
 		constructor(rasp) {
 			this.raspModel = new RaspModel(rasp); //RaspModel
 			this.raspView = new RaspView(this.raspModel, this);
-
-
 		}
 		editBtn(selfRef, numOfEvent) {
 			//console.log('editBtn in controller ' + numOfEvent);
-			//let ind = selfRef.raspModel.addEventCopy(numOfEvent);
 			this.raspView.showForm(numOfEvent);
 		}
-
 		copyBtn(selfRef, numOfEvent) {
 			let ind = selfRef.raspModel.addEventCopy(numOfEvent);
 			this.raspView.showForm(ind);
 		}
-
 		async saveBtnInFormCopy(selfRef, numOfEvent) {
-			//console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
+			console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
 			let req_body = JSON.stringify(selfRef.raspModel.getArr()[numOfEvent]);
 			let response = await fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 			let resp = await response.json();
 			resp = JSON.parse(resp);
-			//console.log(resp, numOfEvent, resp[0].id);
+			console.log(resp);
+
 			let ev = selfRef.raspModel.getEvent(numOfEvent);
 			ev.id = parseInt(resp[0].id);
-			console.log(ev);
+			//console.log(ev);
 		}
 
 		delBtn(selfRef, numOfEvent) {
@@ -81,9 +76,12 @@
 				if (btn_functionality.includes('save')) {
 					//console.log("Catched Ok");
 					fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'save' }) });
+					alert("Saved to file rasp_data.txt in rasp folder of server");
 				}
-				if (btn_functionality.includes('load'))
+				if (btn_functionality.includes('load')){
 					fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'load' }) });
+					alert("DB loaded from file rasp_data.txt in rasp folder of server");
+				}
 
 				if (btn_functionality.includes('download'))
 					window.open('/wp-content/plugins/rasp/rasp_data.txt');
@@ -122,6 +120,7 @@
 			}.bind(this));
 		}
 	}
+
 	/********************** RaspView  Class *****************************/
 	class RaspView {
 		constructor(raspModel, raspCtrl) {
@@ -132,9 +131,11 @@
 			this.createForm();
 		}
 		updateView() {
+			//debugger;
+
 			$(".admin-grid-container >* ").remove();
 			$(".file_act_button").remove();
-			//		debugger;
+
 			$(".admin-grid-container").append(`
 			<div  class="admin-grid-container-div-th grid-act">Action</div>
 			<div  class="admin-grid-container-div-th th-id-col">Id</div>
@@ -147,6 +148,12 @@
 			<div  class="admin-grid-container-div-th th-show_col">Show</div>
 			<div  class="admin-grid-container-div-th">Del</div>	
 			`);  //Header of table
+			this.rasp_model.sort_col();
+			if(this.rasp_model.sort_col == this.rasp_model.sortByDay) $(".th-day-col").append(`^`);
+			if(this.rasp_model.sort_col == this.rasp_model.sortByTime) $(".th-time-col").append(`^`);
+			if(this.rasp_model.sort_col == this.rasp_model.sortByName) $(".th-name-col").append(` ^`);
+			if(this.rasp_model.sort_col == this.rasp_model.sortByPlace) $(".th-place-col").append(` ^`);
+			
 
 			this.rasp_model.getArr().forEach((item, i) => {
 				$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn edit-btn agcd-row${i}">Edit`);
@@ -178,7 +185,6 @@
 			});
 			
 			//$(`.agcd-row1`).css({color:'red', fontSize:'14px', });
-
 			$(".container").append(`
 			<div  class="file_act_button btn_save">Save to File</div>
 			<div  class="file_act_button btn_load">Load from File</div>
@@ -186,8 +192,6 @@
 			`);
 			this.rasp_controller.fileBtn();
 			this.rasp_controller.sortBtn();
-
-
 		}
 
 		createForm(numOfEvent) {
@@ -248,7 +252,6 @@
 			$('#form-show').val(this.rasp_model.getEvent(numOfEvent).event_show);
 
 			$('.edit-area').css('display', 'block');
-
 			this.btn_save = document.querySelector("#form_btn_save");
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -313,7 +316,6 @@
 		}
 	}
 
-
 	/**************************** RaspModel Class *******************************/
 	class RaspModel {
 		constructor(rasp) {
@@ -324,6 +326,7 @@
 				rEvnt.assignEvent(evnt, i);
 				this.raspMod.push(rEvnt);
 			});
+			this.sort_col = this.sortByDay;
 		}
 		getEvent(ind) {
 			return this.raspMod[ind];
@@ -354,6 +357,7 @@
 		}
 
 		sortByDay() {
+			this.sort_col = this.sortByDay;
 			this.raspMod.sort(function (a, b) {
 				if (a.event_day_of_week > b.event_day_of_week) {
 					return 1;
@@ -378,6 +382,7 @@
 		}
 
 		sortByTime() {
+			this.sort_col = this.sortByTime;
 			this.raspMod.sort(function (a, b) {
 				if (a.event_begin_time > b.event_begin_time) {
 					return 1;
@@ -402,6 +407,7 @@
 		}
 
 		sortByName() {
+			this.sort_col = this.sortByName;
 			this.raspMod.sort(function (a, b) {
 				if (a.event_name > b.event_name) {
 					return 1;
@@ -426,6 +432,7 @@
 		}
 
 			sortByPlace() {
+				this.sort_col = this.sortByPlace;
 				this.raspMod.sort(function (a, b) {
 					if (a.event_place > b.event_place) {
 						return 1;
@@ -456,11 +463,12 @@
 		}
 
 		sortByShow() {
+			this.sort_col = this.sortByShow;
 			this.raspMod.sort(function (a, b) {
-				if (a.event_show > b.event_show) {
+				if (parseInt(a.event_show) > parseInt(b.event_show)) {
 					return 1;
 				}
-				if (a.event_show < b.event_show) {
+				if  (parseInt(a.event_show) < parseInt(b.event_show)) {
 					return -1;
 				}
 				return 0;

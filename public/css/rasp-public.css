@@ -9,7 +9,7 @@
 
 .grid-container {
     display: grid;
-    grid-template-columns: [day] 5em [time] 5em [name] auto [place] auto;
+    grid-template-columns: [day] 5em [time] 5em [name] auto [place] auto [description] auto;
     grid-gap: 2px;
     background-color: #2196F3;
     padding: 2px;
