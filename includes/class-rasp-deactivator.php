@@ -40,10 +40,10 @@ class Rasp_Deactivator {
 
 	public static function deactivate() {
 			//  exit("deactivate in" . "\rasp\includes\class-rasp-deactivator.php");
-			global $wpdb;
-			$table_name = "wp_rasp_rasp";
-			$sql = "DROP TABLE IF EXISTS $table_name;";
-			$wpdb->query($sql);
+			// global $wpdb;
+			// $table_name = "wp_rasp_rasp";
+			// $sql = "DROP TABLE IF EXISTS $table_name;";
+			// $wpdb->query($sql);
 			delete_option("my_plugin_db_version");
 	}
 

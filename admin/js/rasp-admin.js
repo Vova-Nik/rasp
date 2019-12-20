@@ -4,38 +4,35 @@
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 
 	async function rasp_ready() {
-		let rasp = await read_from_db();
-		rasp = JSON.parse(rasp);
-		let raspController = new RaspController(rasp);
-	}
-	/******************************end of main()******************************************* */
-	async function save_to_db(rasp_event) {
-		//rasp_event.action = 'save';
-		let req_body = JSON.stringify(rasp_event);
-		//console.log(req_body);
-		// let json_rasp_event = JSON.stringify(rasp_event);
-		// let command = JSON.stringify({ action: 'save'})
-		let response = await fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
-		let rasp = await response.json();
-		console.log(`Write response = ${rasp}`);
-		return rasp_event;
-	}
-
-	/******** Delets record with id= db_id **********/
-	async function del_in_db(db_id) {
-		let response = await fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: db_id }) });
-		// console.log(response);
-		// let rasp = await response.json();
-		return rasp;
-	}
-
-	/******** Reads table from DB and then shows whole table it on display**********/
-	async function read_from_db() {
-
+		//let rasp = await read_from_db();
 		let response = await fetch('/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
 		let rasp = await response.json();
-		return rasp;
+		let raspController = new RaspController(rasp);
 	}
+
+	/******************************end of main()******************************************* */
+	// async function save_to_db(rasp_event) {
+	// 	let req_body = JSON.stringify(rasp_event);
+	// 	let response = await fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+	// 	let rasp = await response.json();
+	// 	console.log(`Write response = ${rasp}`);
+	// 	return rasp_event;
+	// }
+
+	// /******** Delets record with id= db_id **********/
+	// async function del_in_db(db_id) {
+	// 	let response = await fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: db_id }) });
+	// 	// console.log(response);
+	// 	// let rasp = await response.json();
+	// 	return rasp;
+	// }
+
+	/******** Reads table from DB and then shows whole table it on display**********/
+	// async function read_from_db() {
+	// 	let response = await fetch('/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
+	// 	let rasp = await response.json();
+	// 	return rasp;
+	// }
 
 	/******************RaspController************************* */
 	class RaspController {
@@ -51,17 +48,9 @@
 			let ind = selfRef.raspModel.addEventCopy(numOfEvent);
 			this.raspView.showForm(ind);
 		}
-		async saveBtnInFormCopy(selfRef, numOfEvent) {
+		saveBtnInFormCopy(selfRef, numOfEvent) {
 			console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
-			let req_body = JSON.stringify(selfRef.raspModel.getArr()[numOfEvent]);
-			let response = await fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
-			let resp = await response.json();
-			resp = JSON.parse(resp);
-			console.log(resp);
-
-			let ev = selfRef.raspModel.getEvent(numOfEvent);
-			ev.id = parseInt(resp[0].id);
-			//console.log(ev);
+			selfRef.raspModel.saveModel();
 		}
 
 		delBtn(selfRef, numOfEvent) {
@@ -75,17 +64,20 @@
 				//console.log(btn_functionality); //,  .classList[0]);
 				if (btn_functionality.includes('save')) {
 					//console.log("Catched Ok");
-					fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'save' }) });
-					alert("Saved to file rasp_data.txt in rasp folder of server");
+					//fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'save' }) });
+					this.raspModel.saveModeltoCSV();
+
+					//alert("Saved to file rasp_data.txt in rasp folder of server");
 				}
 				if (btn_functionality.includes('load')){
-					fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'load' }) });
-					alert("DB loaded from file rasp_data.txt in rasp folder of server");
+					//fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'load' }) });
+					this.raspModel.loadModelfromCSV();
+					//alert("DB loaded from file rasp_data.txt in rasp folder of server");
 				}
 
 				if (btn_functionality.includes('download'))
 					window.open('/wp-content/plugins/rasp/rasp_data.txt');
-			});
+			}.bind(this));
 		}
 
 		sortBtn() {
@@ -256,15 +248,10 @@
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			//let this_Rasp_Model = this.rasp_model;
-			//let this_ = this;
-
 			this.btn_save.onclick = function () {
 				//console.log('btn save on click in form callback!');
 				$('.edit-area').css('display', 'none');
-				//this_.Rasp_Model.is_activated = false;
 				this.rasp_model.is_activated = false;
-
 				{				//form submiting
 					let time = $('#form-time').val();
 					jQuery.trim(time);
@@ -327,7 +314,31 @@
 				this.raspMod.push(rEvnt);
 			});
 			this.sort_col = this.sortByDay;
+			this.srv_ans = 0;
+			this.request_for_server = 'save'; //read, write - for txt, save load for .csv
 		}
+
+		saveModel(){
+			this.request_for_server = 'write';
+			let req_body = JSON.stringify(this);
+			console.log(req_body);
+			this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+		}
+
+		saveModeltoCSV(){
+			this.request_for_server = 'save';
+			let req_body = JSON.stringify(this);
+			console.log(req_body);
+			this.srv_ans = fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+		}
+
+		loadModelfromCSV(){
+			this.request_for_server = 'load';
+			let req_body = JSON.stringify(this);
+			console.log(req_body);
+			this.srv_ans = fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+		}
+
 		getEvent(ind) {
 			return this.raspMod[ind];
 		}
@@ -348,10 +359,12 @@
 			let evnt = this.raspMod[indeX];
 			evnt.id = '';
 			this.raspMod.push(evnt);
+			this.saveModel();
 		}
 
 		delEvent(num) {
 			this.raspMod[num].killYourself();
+			this.saveModel();
 			//fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.raspMododel[num].id }) });
 			this.raspMod.splice(num, 1);
 		}
@@ -431,7 +444,7 @@
 			});
 		}
 
-			sortByPlace() {
+		sortByPlace() {
 				this.sort_col = this.sortByPlace;
 				this.raspMod.sort(function (a, b) {
 					if (a.event_place > b.event_place) {
@@ -549,7 +562,7 @@
 			if (!this.saved)
 				return null;
 			if (!isNaN(this.id))
-				fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.id }) });
+				//fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.id }) });
 			return null;
 		}
 
@@ -557,7 +570,7 @@
 			if (!this.saved) {
 				let req_body = JSON.stringify(this);
 				console.log(req_body);
-				this.id = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+				//this.id = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 				this.saved = true;
 			}
 		}
