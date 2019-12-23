@@ -11,9 +11,9 @@
 }
 .admin-grid-container {
   display: grid;
-  grid-template-columns: [edit btn] 3em [copy_btn] 3em [id] 2em [day] 5em [time] 5em [name] auto [place] auto [desc] auto [url] auto [show_yn] 4em [del_btn] 3em;
+  grid-template-columns: [edit btn] 3em [copy_btn] 3em [day] 5em [time] 5em [name] auto [place] auto [desc] auto [url] auto [show_yn] 4em [del_btn] 3em;
   grid-template-rows: auto;
-  grid-template-areas: "action action . . . . . . . . .";
+  grid-template-areas: "action action . . . . . . . .";
   /* grid-gap: 2px; */
   background-color: #ababad;
   padding: 1px;
@@ -70,12 +70,22 @@
 }
 
 .edit-area {
-  position: absolute;
+  /* position: absolute;
   left: 50%;
   margin-left: -23%;
   margin-right: 160px;
   top: 4px;
-  width: 46%;
+  width: 46%; */
+    /* position: -webkit-sticky;
+    position: sticky;
+    top: 20px; */
+    position: fixed;
+    top: 10px;
+    width: 46%;
+    /* left: 50%;
+    width: 46%;  */
+    margin: 5% 20% 0px 20%;
+
   height: auto;
   background-color: rgb(172, 190, 248);
   /* opacity: 1; */
