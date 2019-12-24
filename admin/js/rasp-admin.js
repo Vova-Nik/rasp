@@ -2,46 +2,23 @@
 	'use strict';
 
 	document.addEventListener("DOMContentLoaded", rasp_ready);
-
 	async function rasp_ready() {
 		//let rasp = await read_from_db();
 		let response = await fetch('/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
 		let rasp = await response.json();
 		var raspController = new RaspController(rasp);
 	}
+	/***************************** End of main() ******************************************* */
 
-	/******************************end of main()******************************************* */
-	// async function save_to_db(rasp_event) {
-	// 	let req_body = JSON.stringify(rasp_event);
-	// 	let response = await fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
-	// 	let rasp = await response.json();
-	// 	console.log(`Write response = ${rasp}`);
-	// 	return rasp_event;
-	// }
-
-	// /******** Delets record with id= db_id **********/
-	// async function del_in_db(db_id) {
-	// 	let response = await fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: db_id }) });
-	// 	// console.log(response);
-	// 	// let rasp = await response.json();
-	// 	return rasp;
-	// }
-
-	/******** Reads table from DB and then shows whole table it on display**********/
-	// async function read_from_db() {
-	// 	let response = await fetch('/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
-	// 	let rasp = await response.json();
-	// 	return rasp;
-	// }
-
-	/******************RaspController************************* */
+	/***************************** RaspController ************************* */
 	class RaspController {
 		constructor(rasp) {
 			this.raspModel = new RaspModel(rasp); //RaspModel
 			this.raspView = new RaspView(this.raspModel, this);
 		}
+
 		editBtn(selfRef, numOfEvent) {
-			//console.log('editBtn in controller ' + numOfEvent);
+			console.log('editBtn in controller ' + numOfEvent);
 			this.raspView.showForm(numOfEvent);
 		}
 		copyBtn(selfRef, numOfEvent) {
@@ -64,15 +41,13 @@
 				let btn_functionality = element.originalEvent.path[0].className;
 				if (btn_functionality.includes('save')) {
 					this.raspModel.saveModeltoCSV();
-
-					//alert("Saved to file rasp_data.txt in rasp folder of server");
+					alert("Saved to file rasp_data.txt in rasp folder of server");
 				}
 				if (btn_functionality.includes('load')) {
-					//fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'load' }) });
 					this.raspModel.loadModelfromCSV();
-					//alert("DB loaded from file rasp_data.txt in rasp folder of server");
+					alert("DB loaded from file rasp_data.txt in rasp folder of server");
+					location.reload();
 				}
-
 				if (btn_functionality.includes('download'))
 					window.open('/wp-content/plugins/rasp/rasp_data.txt');
 			}.bind(this));
@@ -109,6 +84,13 @@
 				}
 			}.bind(this));
 		}
+
+		additInp(){
+			$('.addit_inp').on("change", function (element) {
+				console.log("additInp!!");
+			});
+		}
+
 		newBtn(selfRef) {
 			$(`.agcd-row-n`).on("click", (element) => {
 				let ind = this.raspModel.addEventNew();
@@ -116,10 +98,9 @@
 				//return ind;
 			});
 		}
-
 	}
 
-	/********************** RaspView  Class *****************************/
+	/**************************** RaspView  Class **************************** */
 	class RaspView {
 		constructor(raspModel, raspCtrl) {
 			this.rasp_model = raspModel;
@@ -127,12 +108,13 @@
 			this.updateView();
 			this.is_activated = false;
 			this.createForm();
+			this.num_of_colls = 3;
 		}
+
 		updateView() {
-			//debugger;
 			$(".admin-grid-container >* ").remove();
-			$(".file_act_button").remove();
-			console.log("View updated", this.rasp_model.getArr());
+			$(".down-form").remove();
+			//console.log("View updated", this.rasp_model.getArr());
 
 			$(".admin-grid-container").append(`
 			<div  class="admin-grid-container-div-th grid-act">Action</div>
@@ -151,7 +133,6 @@
 			if (this.rasp_model.sort_col == this.rasp_model.sortByName) $(".th-name-col").append(` ^`);
 			if (this.rasp_model.sort_col == this.rasp_model.sortByPlace) $(".th-place-col").append(` ^`);
 
-
 			this.rasp_model.getArr().forEach((item, i) => {
 				$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn edit-btn agcd-row${i}">Edit</div>`);
 				$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn copy-btn agcd-row${i}">Copy</div>`);
@@ -166,7 +147,6 @@
 				if (i % 2 == 1) {
 					$(`.agcd-row${i}`).css('opacity', '.8');
 				}
-
 				let thisRaspController = this.rasp_controller;
 
 				$(`.edit-btn.agcd-row${i}`).on("click", function (element) {
@@ -195,15 +175,29 @@
 
 
 			//$(`.agcd-row1`).css({color:'red', fontSize:'14px', });
-			$(".container").append(`
-			<div  class="file_act_button btn_save">Save to File</div>
-			<div  class="file_act_button btn_load">Load from File</div>
-			<div  class="file_act_button btn_download">Download File</div>
-			`);
+			//$(".container").append(`<div class="down-form">
+			let ph = this.num_of_colls;
+
+			$("#wpbody-content").append(
+			`<div class="down-form">
+				<div  class="file_act_button btn_save">Save to File</div>
+				<div  class="file_act_button btn_load">Load from File</div>
+				<div  class="file_act_button btn_download">Download File</div>
+				<div>
+					<input type="number" class="addit_inp" id="down-num" min="0" max="32" placeholder=${ph}>
+					<label for="scales">Number of rows</label>
+				</div>
+				<div>
+					<input type="checkbox" class="addit_inp" id="down-chk" name="Adaptive" checked>
+					<label for="scales">Adaptive</label>
+				</div>
+			</div>
+			`);//${this.num_of_colls}
 
 			this.rasp_controller.newBtn();
 			this.rasp_controller.fileBtn();
 			this.rasp_controller.sortBtn();
+			this.rasp_controller.additInp();
 		}
 
 		createForm(numOfEvent) {
@@ -319,22 +313,27 @@
 				this.updateView();
 				this.rasp_controller.saveBtnInFormCopy(this.rasp_controller, numOfEvent);
 			}.bind(this, numOfEvent);
-			////////////////////////////////////////////////////////////////////////////////////
 		}
 	}
 
-	/**************************** RaspModel Class *******************************/
+	/**************************** RaspModel Class ****************************** */
 	class RaspModel {
 		constructor(rasp) {
 			this.raspMod = new Array();
 			let rEvnt = '';
-			rasp.forEach((evnt, i) => {
-				rEvnt = new RaspEvent();
-				rEvnt.assignEvent(evnt, i);
-				rEvnt.num_in_rasp_model = i;
-				this.raspMod.push(rEvnt);
-			});
 
+			if (rasp.length >= 1) {
+				rasp.forEach((evnt, i) => {
+					rEvnt = new RaspEvent();
+					rEvnt.assignEvent(evnt, i);
+					rEvnt.num_in_rasp_model = i;
+					this.raspMod.push(rEvnt);
+				});
+			}
+
+			//console.log('rasp = ', rasp);
+			this.num_of_rows = 3;
+			this.adaptive = false;
 			this.sort_col = this.sortByDay;
 			this.srv_ans = 0;
 			this.request_for_server = 'save'; //read, write - for txt, save load for .csv
@@ -343,7 +342,7 @@
 		saveModel() {
 			this.request_for_server = 'write';
 			let req_body = JSON.stringify(this);
-			//console.log("saving", this.getArr());
+			console.log("saving", req_body);
 			this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 		}
 
@@ -519,7 +518,7 @@
 		}
 	}
 
-	/**************************** RaspEvent Class*************************************/
+	/**************************** RaspEvent Class ************************************ */
 	class RaspEvent {
 		constructor() {
 			this.event_begin_time = '';
@@ -605,7 +604,8 @@
 			}
 		}
 	}
-	/**************************** RaspEvent class END **************************************/
+
+	/**************************** RaspEvent class END ************************************* */
 
 })(jQuery);
 

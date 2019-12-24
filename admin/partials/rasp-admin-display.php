@@ -20,7 +20,6 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 {
 	$handler = fopen("wp-content/plugins/rasp/rasp_data.txt", 'r');
 	if (($handler = fopen("wp-content/plugins/rasp/rasp_data.txt", "r")) !== FALSE) {
-	
 		$data = fread($handler,filesize("wp-content/plugins/rasp/rasp_data.txt"));
 		fclose($handler);
 		$loadedFileObj = json_decode($data);
@@ -33,16 +32,35 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 function rasp_restAPI_point_write(WP_REST_Request $request)
 {
 	error_log('write rasp request');
+	//"num_of_rows":3,"srv_ans":0,"request_for_server":"write","guid":52,"is_activated":false
+	$rasp = (array)($request['raspMod']);
+  
 	$handler = fopen("wp-content/plugins/rasp/rasp_data.txt", 'w');
-	$rasp = ($request["raspMod"]);
 	$cntr=0;
 	foreach($rasp as $rr){
-		error_log(implode("---", $rr));
+		//error_log(implode("---", $rr));
 		$cntr++;
 	}
 	$to_file = json_encode($rasp, JSON_HEX_TAG);
 	fputs($handler, $to_file);
 	fclose($handler);
+
+	class Settings{
+		public $rasp_num_of_rows = 5;
+		public $rasp_adaptive = false;
+		public $rasp_sort_col = "sortByDay";
+	}
+
+	$settings = new Settings();
+	$settings->rasp_num_of_rows = $request['num_of_rows'];
+	$settings->rasp_adaptive = $request['adaptive'];
+	$settings->rasp_sort_col = $request['sort_col'];
+
+	error_log("style adaptive " . json_encode($settings));
+	$handler = fopen("wp-content/plugins/rasp/rasp_config.txt", 'w');
+	fputs($handler, json_encode($settings));
+	fclose($handler);
+
 	return $cntr;
 }
 
