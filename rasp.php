@@ -71,7 +71,7 @@ register_deactivation_hook( __FILE__, 'deactivate_rasp' );
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-rasp.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-vvv-Import-db.php';
+// require plugin_dir_path( __FILE__ ) . 'includes/class-vvv-Import-db.php';
 
 
 /**

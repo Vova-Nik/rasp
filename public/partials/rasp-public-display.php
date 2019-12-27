@@ -12,52 +12,52 @@
  * @subpackage Rasp/public/partials
  */
 
-
 //<!-- This file should primarily consist of HTML with a little bit of PHP. -->
-//<link rel="stylesheet" type="text/css" href="C:\openserver\ospanel\domains\raspwp\wp-content\plugins\rasp\public\css\rasp-public.css">
 
 class Display
 {
 	public function display_rasp_table($the_content)
 	{
-		if (strpos($the_content, 'RASP') !== false) {
-
+		error_log($the_content);
+		if (strpos($the_content, "[RASP]") < 0) {
+			return "Ниххуя!" . $the_content;
+		}
+		else{
 			$replacement =
 				'
 				<div class="before-grid">Сегодня</div>
 				<div class="grid-container">
-
 				</div>
 				';
 
-			global $wpdb;
-			$table_name = $wpdb->prefix . 'rasp_rasp';
-			$charset_collate = $wpdb->get_charset_collate();
-
-			if (!empty($wpdb->error))
-				wp_die($wpdb->error);
-
-			$results = $wpdb->get_results("SELECT * FROM $table_name");
-
-			//JSON_UNESCAPED_SLASHES (integer) Не экранировать /. Доступно с PHP 5.4.0.
-			//JSON_HEX_TAG (integer) Все < и > кодируются в \u003C и \u003E. Доступно с PHP 5.3.0.
-
+			//global $wpdb;
+				$fileName = "wp-content/plugins/rasp/rasp_data.txt";
+				if(file_exists($fileName)){
+					$handler = fopen($fileName, 'r');
+					if (($handler = fopen("wp-content/plugins/rasp/rasp_data.txt", "r")) !== FALSE) {
+						$data = fread($handler,filesize("wp-content/plugins/rasp/rasp_data.txt"));
+						fclose($handler);
+						$loadedFileObj = json_decode($data);
+						error_log('PHP Read ' );
+					}
+				 }
+				 else{
+					error_log('File rasp_data.txt not exist, or rasp page is under administrating');
+					return;
+				 }
+			
 			$replacement .= '<div id="event_data">';
-			foreach($results as $record){
+			foreach($loadedFileObj  as $record){
 				//$rasp_event = (string) json_encode($record, JSON_HEX_TAG );
 				$replacement .= '<div class="event_data_element">';
 				$replacement .= (string) json_encode($record, JSON_HEX_TAG );
 				$replacement .= '</div>';
 			}
-
 			$replacement .= '</div>';
-
-
-			$pattern = '/RASP/';
+			$pattern = '/\[RASP\]/'; // '/\[RASP\]/'
 			$the_content = preg_replace($pattern, $replacement, $the_content);
 			return $the_content;
 		}
-
 		return $the_content;
 	}
 }

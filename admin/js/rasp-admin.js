@@ -35,29 +35,50 @@
 			selfRef.raspView.updateView();
 		}
 
-
 		fileBtn() {
-			$(".file_act_button").on("click", function (element) {
+			
+			$(".form_act_button").on("click", function (element) {
 				let btn_functionality = element.originalEvent.path[0].className;
 				if (btn_functionality.includes('save')) {
 					this.raspModel.saveModeltoCSV();
-					alert("Saved to file rasp_data.txt in rasp folder of server");
+
+					//alert("Saved to file rasp_data.txt in rasp folder of server");
 				}
-				if (btn_functionality.includes('load')) {
+				if (btn_functionality.includes('btn_load')) {
 					this.raspModel.loadModelfromCSV();
 					alert("DB loaded from file rasp_data.txt in rasp folder of server");
 					location.reload();
 				}
 				if (btn_functionality.includes('download'))
-					window.open('/wp-content/plugins/rasp/rasp_data.txt');
+					window.open('/wp-content/plugins/rasp/rasp_data.csv');
+					//<p><a href="images/xxx.jpg" download>Скачать файл</a>
+
+				if (btn_functionality.includes('upload')){
+
+				}
 			}.bind(this));
+
+				$("#inp-file").on("change", function (element){
+
+					if(element.target.files.length > 1){
+						alert("Only one file at once");
+						return;
+					}
+					if(element.target.files[0].name.endsWith('.csv') != true){
+						alert("Only correct .csv file");
+						return;
+					}
+					console.log("file selected", element.target.files[0].name);					
+
+				});
 		}
+
 
 		sortBtn() {
 			$('.admin-grid-container-div-th').on("click", function (element) {
 
 				let btn_functionality = element.originalEvent.path[0].className;
-				console.log(btn_functionality); //,  .classList[0]);
+				//console.log(btn_functionality); //,  .classList[0]);
 				if (btn_functionality.includes('th-day-col')) {
 					this.raspModel.sortByDay();
 					this.raspView.updateView();
@@ -114,6 +135,7 @@
 		updateView() {
 			$(".admin-grid-container >* ").remove();
 			$(".down-form").remove();
+			$(".common-settings-form").remove();
 			//console.log("View updated", this.rasp_model.getArr());
 
 			$(".admin-grid-container").append(`
@@ -179,19 +201,36 @@
 			let ph = this.num_of_colls;
 
 			$("#wpbody-content").append(
-			`<div class="down-form">
-				<div  class="file_act_button btn_save">Save to File</div>
-				<div  class="file_act_button btn_load">Load from File</div>
-				<div  class="file_act_button btn_download">Download File</div>
-				<div>
-					<input type="number" class="addit_inp" id="down-num" min="0" max="32" placeholder=${ph}>
-					<label for="scales">Number of rows</label>
+			`
+			<div class="common-settings-form">
+				<div class="settings-form">
+						<p>Table. Way to show settings</p>
+						<div><input type="checkbox" checked>Display Name</div>
+						<div><input type="checkbox" checked>Display Place</div>
+						<div><input type="checkbox" checked>Display Description</div>
+						<div><input type="checkbox" checked>Display URL Link</div>
+					<div>
+								<input type="number" class="addit_inp" id="down-num" min="0" max="32" placeholder=${ph}>
+								<label for="scales">Number of rows</label>
+					</div>
+					<div>
+								<input type="checkbox" class="addit_inp" id="down-chk" name="Adaptive" checked>
+								<label for="scales">Adaptive</label>
+					</div>
+					<div  class="form_act_button btn_save">Save</div>
+
+		  		</div>
+					<div class="file-oper-form">
+							<p>Local .csv file</p>
+							<div  class="form_act_button btn_save">Save to File</div>
+							<div  class="form_act_button btn_load">Load from File</div>
+							<div  class="form_act_button btn_download">Download</div>
+							<input id="inp-file" name="myCsvFile" type="file">
+							<label class="form_act_button btn_upload" for="inp-file">Upload</label>
+
+					</div>
 				</div>
-				<div>
-					<input type="checkbox" class="addit_inp" id="down-chk" name="Adaptive" checked>
-					<label for="scales">Adaptive</label>
-				</div>
-			</div>
+
 			`);//${this.num_of_colls}
 
 			this.rasp_controller.newBtn();

@@ -95,10 +95,7 @@ class Rasp_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/rasp-public.js', array( 'jquery' ), $this->version, false );
-		
-
 	}
 
 	public function enqueue_filters(){
