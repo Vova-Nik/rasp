@@ -18,9 +18,8 @@ class Display
 {
 	public function display_rasp_table($the_content)
 	{
-		error_log($the_content);
 		if (strpos($the_content, "[RASP]") < 0) {
-			return "Ниххуя!" . $the_content;
+			return $the_content;
 		}
 		else{
 			$replacement =
@@ -38,11 +37,11 @@ class Display
 						$data = fread($handler,filesize("wp-content/plugins/rasp/rasp_data.txt"));
 						fclose($handler);
 						$loadedFileObj = json_decode($data);
-						error_log('PHP Read ' );
+						//error_log('PHP Read ' );
 					}
 				 }
 				 else{
-					error_log('File rasp_data.txt not exist, or rasp page is under administrating');
+					error_log('There is no file rasp_data.txt, or rasp page is under administrating');
 					return;
 				 }
 			
@@ -54,7 +53,7 @@ class Display
 				$replacement .= '</div>';
 			}
 			$replacement .= '</div>';
-			$pattern = '/\[RASP\]/'; // '/\[RASP\]/'
+			$pattern = '/\[RASP\]/';
 			$the_content = preg_replace($pattern, $replacement, $the_content);
 			return $the_content;
 		}

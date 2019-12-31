@@ -36,12 +36,10 @@
 		}
 
 		fileBtn() {
-			
 			$(".form_act_button").on("click", function (element) {
 				let btn_functionality = element.originalEvent.path[0].className;
 				if (btn_functionality.includes('save')) {
 					this.raspModel.saveModeltoCSV();
-
 					//alert("Saved to file rasp_data.txt in rasp folder of server");
 				}
 				if (btn_functionality.includes('btn_load')) {
@@ -51,28 +49,24 @@
 				}
 				if (btn_functionality.includes('download'))
 					window.open('/wp-content/plugins/rasp/rasp_data.csv');
-					//<p><a href="images/xxx.jpg" download>Скачать файл</a>
+				//<p><a href="images/xxx.jpg" download>Скачать файл</a>
 
-				if (btn_functionality.includes('upload')){
-
+				if (btn_functionality.includes('upload')) {
 				}
 			}.bind(this));
 
-				$("#inp-file").on("change", function (element){
-
-					if(element.target.files.length > 1){
-						alert("Only one file at once");
-						return;
-					}
-					if(element.target.files[0].name.endsWith('.csv') != true){
-						alert("Only correct .csv file");
-						return;
-					}
-					console.log("file selected", element.target.files[0].name);					
-
-				});
+			$("#inp-file").on("change", function (element) {
+				if (element.target.files.length > 1) {
+					alert("Only one file at once");
+					return;
+				}
+				if (element.target.files[0].name.endsWith('.csv') != true) {
+					alert("Only correct .csv file");
+					return;
+				}
+				console.log("file selected", element.target.files[0].name);
+			});
 		}
-
 
 		sortBtn() {
 			$('.admin-grid-container-div-th').on("click", function (element) {
@@ -106,7 +100,7 @@
 			}.bind(this));
 		}
 
-		additInp(){
+		additInp() {
 			$('.addit_inp').on("change", function (element) {
 				console.log("additInp!!");
 			});
@@ -200,8 +194,8 @@
 			//$(".container").append(`<div class="down-form">
 			let ph = this.num_of_colls;
 
-			$("#wpbody-content").append(
-			`
+			$(".aditional").append(
+				`
 			<div class="common-settings-form">
 				<div class="settings-form">
 						<p>Table. Way to show settings</p>

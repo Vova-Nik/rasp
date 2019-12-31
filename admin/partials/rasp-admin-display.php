@@ -12,6 +12,7 @@ function display_frame()
 	echo "<div class='container'>";
 	echo "<h2>Its admin part of RASP</h2>";
 	echo "<div class='admin-grid-container' id='tab1'></div>";
+	echo "<div class='aditional' id='tab1'></div>";
 	echo "</div>";
 }
 

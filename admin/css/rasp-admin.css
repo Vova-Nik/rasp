@@ -190,6 +190,11 @@
 #inp-file{
   width: 0px;
 }
+
+.aditional{
+  margin: 1em;
+}
+
 .form_act_button {
   background-color: #bebef8;
   border: solid black 1px;
