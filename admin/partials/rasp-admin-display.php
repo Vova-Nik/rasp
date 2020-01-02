@@ -29,7 +29,6 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 	}
 	return false;
 }
-
 function rasp_restAPI_point_write(WP_REST_Request $request)
 {
 	error_log('write rasp request');
