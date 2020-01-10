@@ -4,31 +4,40 @@
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 	async function rasp_ready() {
 		//let rasp = await read_from_db();
+
 		let response = await fetch('/wp-json/rasp/v1/raspread', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'read' }) });
 		let rasp = await response.json();
-		var raspController = new RaspController(rasp);
+		rasp = JSON.parse(rasp);
+		let raspController = new RaspController(rasp);
 	}
 	/***************************** End of main() ******************************************* */
 
 	/***************************** RaspController ************************* */
 	class RaspController {
 		constructor(rasp) {
+
 			this.raspModel = new RaspModel(rasp); //RaspModel
 			this.raspView = new RaspView(this.raspModel, this);
 		}
-
-		editBtn(selfRef, numOfEvent) {
-			console.log('editBtn in controller ' + numOfEvent);
-			this.raspView.showForm(numOfEvent);
-		}
-		copyBtn(selfRef, numOfEvent) {
-			let ind = selfRef.raspModel.addEventCopy(numOfEvent);
-			this.raspView.showForm(ind);
-		}
-		saveBtnInFormCopy(selfRef, numOfEvent) {
-			console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
-			selfRef.raspModel.saveModel();
-		}
+		//
+		// editBtn(selfRef, numOfEvent) {
+		// 	console.log('editBtn in controller ' + numOfEvent);
+		// 	this.raspView.showForm(numOfEvent);
+		// }
+		// copyBtn(selfRef, numOfEvent) {
+		// 	let ind = selfRef.raspModel.addEventCopy(numOfEvent);
+		// 	this.raspView.showForm(ind);
+		// }
+		//******************************************************************************************************************************************************************************************//
+		// saveBtnInFormCopy(selfRef, numOfEvent) {
+		// 	console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
+		// 	//selfRef.raspModel.saveModel();
+		// 	//selfRef.raspModel.editDBRecord();
+		// }
+		// saveBtnInFormEdit(selfRef, numOfEvent) {
+		// 	console.log('editBtn in controller part 2 - Save in FORM', numOfEvent);
+		// 	selfRef.raspModel.saveModel();
+		// }
 
 		delBtn(selfRef, numOfEvent) {
 			selfRef.raspModel.delEvent(numOfEvent);
@@ -124,6 +133,7 @@
 			this.is_activated = false;
 			this.createForm();
 			this.num_of_colls = 3;
+			this.currentFormID = 0;	//num of event in table for form/ Set - in show form, use in save btn in form
 		}
 
 		updateView() {
@@ -131,8 +141,10 @@
 			$(".down-form").remove();
 			$(".common-settings-form").remove();
 			//console.log("View updated", this.rasp_model.getArr());
+			const adminGridContainer = $(".admin-grid-container");
+			//	$(".admin-grid-container").append(`
 
-			$(".admin-grid-container").append(`
+			adminGridContainer.append(`
 			<div  class="admin-grid-container-div-th grid-act">Action</div>
 			<div  class="admin-grid-container-div-th th-day-col">Day</div>
 			<div  class="admin-grid-container-div-th th-time-col">Time</div>
@@ -150,24 +162,20 @@
 			if (this.rasp_model.sort_col == this.rasp_model.sortByPlace) $(".th-place-col").append(` ^`);
 
 			this.rasp_model.getArr().forEach((item, i) => {
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn edit-btn agcd-row${i}">Edit</div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn copy-btn agcd-row${i}">Copy</div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_day_of_week} </div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_begin_time} </div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_name} </div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_place} </div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_description} </div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_url} </div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_show} </div>`);
-				$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn del-btn agcd-row${i}">Del</div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div-btn edit-btn agcd-row${i}" data-index = ${i}>Edit</div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div-btn copy-btn agcd-row${i} ">Copy</div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_day_of_week} </div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_begin_time} </div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_name} </div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_place} </div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_description} </div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_url} </div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div agcd-row${i}"> ${item.event_show} </div>`);
+				adminGridContainer.append(`<div class="admin-grid-container-div-btn del-btn agcd-row${i}">Del</div>`);
 				if (i % 2 == 1) {
 					$(`.agcd-row${i}`).css('opacity', '.8');
 				}
 				let thisRaspController = this.rasp_controller;
-
-				$(`.edit-btn.agcd-row${i}`).on("click", function (element) {
-					thisRaspController.editBtn(thisRaspController, i);
-				}).bind(thisRaspController, i);
 
 				$(`.copy-btn.agcd-row${i}`).on("click", function (element) {
 					thisRaspController.copyBtn(thisRaspController, i);
@@ -178,16 +186,32 @@
 				}).bind(thisRaspController, i);
 			});
 
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div-btn edit-btn agcd-row-n">New</div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div-blank"></div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div"> </div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div"> </div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div"> </div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div"> </div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div"> </div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div"> </div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div"> </div>`);
-			$(".admin-grid-container").append(`<div class="admin-grid-container-div-blank"></div>`);
+			const th = this;
+			$(`.edit-btn`).on("click", function(event){
+				const ind = event.target.dataset.index;
+				th.showForm(ind);
+				//this.rasp_model.updateEvent(i);
+			}).bind(th);
+
+			// editBtn(selfRef, numOfEvent) {
+			// 	console.log('editBtn in controller ' + numOfEvent);
+			// 	this.raspView.showForm(numOfEvent);
+			// }
+			// copyBtn(selfRef, numOfEvent) {
+			// 	let ind = selfRef.raspModel.addEventCopy(numOfEvent);
+			// 	this.raspView.showForm(ind);
+			// }
+
+			adminGridContainer.append(`<div class="admin-grid-container-div-btn edit-btn agcd-row-n">New</div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div-blank"></div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
+			adminGridContainer.append(`<div class="admin-grid-container-div-blank"></div>`);
 
 
 			//$(`.agcd-row1`).css({color:'red', fontSize:'14px', });
@@ -225,7 +249,7 @@
 					</div>
 				</div>
 
-			`);//${this.num_of_colls}
+			`);
 
 			this.rasp_controller.newBtn();
 			this.rasp_controller.fileBtn();
@@ -233,9 +257,9 @@
 			this.rasp_controller.additInp();
 		}
 
+///////////////////////////////////////////////////////////////////////////////////////////////
 		createForm(numOfEvent) {
 			$('#wpbody-content').append('<div class="edit-area"></div>');
-
 			{					/********************** HTML for FORM******************************** */
 				$('.edit-area').append(`
 				<form id = "rasp-form">
@@ -269,36 +293,29 @@
 						<input type="number" id="form-show" min="0" max="128" placeholder="">
 						</li>
 						<li>
-						<div id = "form_btn_save" class = 'form-btn'>Save</div>
+							<div class = "form-btn-area">
+								<div id = "form_btn_save" class = 'form-btn'>Save</div>
+								<div id = "form_btn_escape" class = 'form-btn'>Escape</div>  
+							</div> 
 						</li>
 					</ul>
-				</form
+				</form>
 				`);
 			}
 			$('.edit-area').css('display', 'none');
-		}
 
-		showForm(numOfEvent) {
-			if (this.is_activated)
-				return; 			//escape dublicate call of the form
-			this.is_activated = true;
-			$('#form-time').val(this.rasp_model.getEvent(numOfEvent).event_begin_time);
-			$('#form-day').val(this.rasp_model.getEvent(numOfEvent).event_day_of_week);
-			$('#form-name').val(this.rasp_model.getEvent(numOfEvent).event_name);
-			$('#form-place').val(this.rasp_model.getEvent(numOfEvent).event_place);
-			$('#form-description').val(this.rasp_model.getEvent(numOfEvent).event_description);
-			$('#form-url').val(this.rasp_model.getEvent(numOfEvent).event_url);
-			$('#form-show').val(this.rasp_model.getEvent(numOfEvent).event_show);
-
-			$('.edit-area').css('display', 'block');
-			this.btn_save = document.querySelector("#form_btn_save");
-
-			////////////////////////////////////////////////////////////////////////////////////////////////////
-
-			this.btn_save.onclick = function () {
+			let that = this;
+			$('#form_btn_escape').on('click', function(event){
+				$('.edit-area').css('display', 'none');
+				that.is_activated = false;
+			}.bind(that));
+////////////////////////////////////////////////////////////////////////////////////////////////
+			$('#form_btn_save').on('click', function(event){
 				//console.log('btn save on click in form callback!');
 				$('.edit-area').css('display', 'none');
-				this.rasp_model.is_activated = false;
+				const rasp_event_id = that.currentFormID;
+				const currentEvent = that.rasp_model.getEvent(rasp_event_id);
+				//this.rasp_model.is_activated = false;
 				{				//form submiting
 					let time = $('#form-time').val();
 					jQuery.trim(time);
@@ -323,7 +340,8 @@
 					if (ts < 10) ts = '0' + ts;
 					else ts = '' + ts;
 
-					this.rasp_model.getEvent(numOfEvent).event_begin_time = th + ':' + tm + ':' + ts;
+					//this.rasp_model.getEvent(numOfEvent).event_begin_time = th + ':' + tm + ':' + ts;
+					currentEvent.event_begin_time = th + ':' + tm + ':' + ts;
 
 					let dofw = $('#form-day').val();
 					jQuery.trim(time);
@@ -331,27 +349,53 @@
 					if (isNaN(dofw)) dofw = 0;
 					if (dofw < 0) dofw = 0;
 					if (dofw > 6) dofw = dofw % 7;
-					this.rasp_model.getEvent(numOfEvent).event_day_of_week = dofw;
+					currentEvent.event_day_of_week = dofw;
 
-					this.rasp_model.getEvent(numOfEvent).event_name = $('#form-name').val();
-					this.rasp_model.getEvent(numOfEvent).event_place = $('#form-place').val();
-					this.rasp_model.getEvent(numOfEvent).event_description = $('#form-description').val();
-					this.rasp_model.getEvent(numOfEvent).event_url = $('#form-url').val();
+					currentEvent.event_name = $('#form-name').val();
+					currentEvent.event_place = $('#form-place').val();
+					currentEvent.event_description = $('#form-description').val();
+					currentEvent.event_url = $('#form-url').val();
 
 					let sh = $('#form-show').val();
 					//if (sh != 0) sh = 1;
-					this.rasp_model.getEvent(numOfEvent).event_show = sh;
+					currentEvent.event_show = sh;
 				}
-				this.is_activated = false;
-				this.updateView();
-				this.rasp_controller.saveBtnInFormCopy(this.rasp_controller, numOfEvent);
-			}.bind(this, numOfEvent);
+
+				that.is_activated = false;
+				console.log('currentEvent2 ',currentEvent );
+				that.rasp_model.updateEvent(numOfEvent);
+				that.updateView();
+			}.bind(that));
+
+		}
+
+		showForm(numOfEvent) {
+			if (this.is_activated)
+				return; 			//escape dublicate call of the form
+			this.is_activated = true;
+			const event = this.rasp_model.getEventCopy(numOfEvent);
+			this.currentFormID = numOfEvent;  // for "save" button
+			$('#form-time').val(event.event_begin_time);
+			$('#form-day').val(event.event_day_of_week);
+			$('#form-name').val(event.event_name);
+			$('#form-place').val(event.event_place);
+			$('#form-description').val(event.event_description);
+			$('#form-url').val(event.event_url);
+			$('#form-show').val(event.event_show);
+			$('.edit-area').css('display', 'block');  //Show form
+			//this.btn_save = document.querySelector("#form_btn_save");
+			//this.btn_escape = document.querySelector("#form_btn_escape");
+
+			////////////////////////////////////////////////////////////////////////////////////////////////////
 		}
 	}
 
 	/**************************** RaspModel Class ****************************** */
 	class RaspModel {
 		constructor(rasp) {
+			// console.log('rasp = ', rasp);
+			// console.log('raspLength = ', rasp.length);
+
 			this.raspMod = new Array();
 			let rEvnt = '';
 
@@ -364,20 +408,36 @@
 				});
 			}
 
-			//console.log('rasp = ', rasp);
+			//console.log('raspMod = ', this.raspMod);
 			this.num_of_rows = 3;
 			this.adaptive = false;
 			this.sort_col = this.sortByDay;
 			this.srv_ans = 0;
 			this.request_for_server = 'save'; //read, write - for txt, save load for .csv
 		}
-
-		saveModel() {
-			this.request_for_server = 'write';
+		updateEvent(numOfEvent){
+			console.log('Rasp model updateEvent numOfEvent  - ', numOfEvent,);
 			let req_body = JSON.stringify(this);
 			console.log("saving", req_body);
 			this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 		}
+
+		saveModel() {
+			//this.request_for_server = 'write';
+			let req_body = JSON.stringify(this);
+			console.log("saving", req_body);
+			this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+		}
+
+		// editDBRecord(numInModel){
+		// 	let req_body = JSON.stringify(this.raspMod[numInModel]);
+		// 	console.log("saving", req_body);
+		// 	this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
+		// }
+		//
+		// copyRecord(numInModel){
+		// 	return numInModel;
+		// }
 
 		saveModeltoCSV() {
 			this.request_for_server = 'save';
@@ -393,9 +453,31 @@
 			this.srv_ans = fetch('/wp-json/rasp/v1/raspfile', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
 		}
 
+		getEventCopy(ind) {
+			const ev = {};
+			Object.assign(ev, this.raspMod[ind]);
+			return ev;
+		}
+
 		getEvent(ind) {
 			return this.raspMod[ind];
 		}
+		//
+		// updateEvent(index, event){
+		//
+		// 	this.raspMod[ind].event_begin_time = event.event_begin_time;
+		// 	this.raspMod[ind].event_category = event.event_category;
+		// 	this.raspMod[ind].event_day_of_week = event.event_day_of_week;
+		// 	this.raspMod[ind].event_description = event.event_description;
+		// 	this.raspMod[ind].event_end_time = event.event_end_time;
+		// 	this.raspMod[ind].event_name = event.event_name;
+		// 	this.raspMod[ind].event_place = event.event_place;
+		// 	this.raspMod[ind].event_show = event.event_show;
+		// 	this.raspMod[ind].event_url = event.event_url;
+		// 	this.raspMod[ind].id = event.id;
+		// 	//this.raspMod[ind].saved = false;
+		// }
+
 
 		getArr() {
 			return this.raspMod;
@@ -424,11 +506,13 @@
 		}
 
 		delEvent(num) {
+
+			//this.saveModel();
+			//let idd = this.raspMod[num].id;
+			console.log(this.raspMod);
+			fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.raspMod[num].id }) });
 			this.raspMod[num].killYourself();
 			this.raspMod.splice(num, 1);
-			this.saveModel();
-			//fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.raspMododel[num].id }) });
-
 		}
 
 		sortByDay() {
@@ -563,7 +647,7 @@
 			this.event_place = '';
 			this.event_show = 1;
 			this.event_url = '';
-			//this.id = '';
+			this.id = '';
 			this.saved = false;
 			this.date = new Date();
 		}
@@ -578,7 +662,7 @@
 			this.event_place = eventObj.event_place;
 			this.event_show = eventObj.event_show;
 			this.event_url = eventObj.event_url;
-			//this.id = eventObj.id;
+			this.id = eventObj.id;
 			this.saved = eventObj.saved;
 			this.num_in_rasp_model = numInRaspModel;
 			this.unicId = eventObj.unicId;
@@ -609,7 +693,7 @@
 			else this.event_show = templObj.event_show;
 			if (typeof templObj.event_url === "undefined") this.event_url = 'Event URL';
 			else this.event_url = templObj.event_url;
-			//this.id = null;
+			this.id = null;
 			this.event_sortier = this.event_day_of_week + this.event_begin_time[0] + this.event_begin_time[1] + this.event_begin_time[3] + this.event_begin_time[4] + this.event_begin_time[6] + this.event_begin_time[7];
 			this.unicId = this.createId(numInRaspModel);
 			return this;
