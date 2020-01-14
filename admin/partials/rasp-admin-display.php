@@ -19,13 +19,13 @@ function display_frame()
 /***************************organized in C:\openserver\ospanel\domains\raspwp\wp-content\plugins\rasp\admin\class-rasp-admin.php */
 function rasp_restAPI_point_read(WP_REST_Request $request)
 {
-	global $wpdb;
-	$table_name = $wpdb->prefix . 'rasp_rasp';
-	$charset_collate = $wpdb->get_charset_collate();
-	if (!empty($wpdb->error))
-		wp_die($wpdb->error);
+	//global $wpdb;
+	//$table_name = $wpdb->prefix . 'rasp_rasp';
+	//$charset_collate = $wpdb->get_charset_collate();
+	//if (!empty($wpdb->error))
+	//	wp_die($wpdb->error);
 	//$ans = $args[0];
-	$action = $request['action'];
+	//$action = $request['action'];
 	//error_log('Request = ' . $request['action']);
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'rasp_rasp';
@@ -35,7 +35,7 @@ function rasp_restAPI_point_read(WP_REST_Request $request)
 
 	$results = $wpdb->get_results("SELECT * FROM $table_name");
 	$to_page = json_encode($results, JSON_HEX_TAG);
-	//error_log('PHP Read');
+	error_log('PHP Read');
 	error_log($to_page);
 	return  $to_page;
 }
@@ -98,7 +98,6 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 		error_log('copy (insert)  in work');
 	}
 
-
 	error_log($request['id']);
 	error_log($request['event_begin_time']);
 	error_log($request['event_day_of_week']);
@@ -111,89 +110,87 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 	return 'save_rasp_DB() processed';
 }
 
-
 function rasp_restAPI_point_file(WP_REST_Request $request)
 {
 	$action = $request['request_for_server'];   //load or save
 	error_log($action );
 	/************************Write file**************************************** */
 	if ($action == 'save') {
-		$handler = fopen("wp-content/plugins/rasp/rasp_data.csv", 'w');
-		$rasp = (array)($request['raspMod']);
-		// error_log(gettype($rasp));
-		error_log(json_encode($rasp));
-	 	foreach ($rasp as  $value) {
-			//$to_page = json_encode($results, JSON_HEX_TAG);
-			fputcsv($handler, $value);
-		 }
-		fclose($handler);
+        	global $wpdb;
+        	$table_name = $wpdb->prefix . 'rasp_rasp';
+        	$charset_collate = $wpdb->get_charset_collate();
+        	if (!empty($wpdb->error))
+        		wp_die($wpdb->error);
+
+        	$results = $wpdb->get_results("SELECT * FROM $table_name");
+        	//$to_file = json_encode($results, JSON_HEX_TAG);
+        	error_log('PHP Read');
+        	//error_log($to_file);
+
+    		$handler = fopen("wp-content/plugins/rasp/rasp_data.csv", 'w');
+    		$keyArray = array();
+    		$record = $results[0];
+   		   foreach($record as $key=>$cell){
+	               array_push($keyArray, strval($key));
+    		     }
+        	 error_log(json_encode($record, JSON_HEX_TAG));
+            fputcsv($handler, $keyArray);
+
+    		$recordArray = array();
+    		foreach($results as $record){
+    		   foreach($record as $key=>$cell){
+   		            array_push($recordArray, strval($cell));
+    		     }
+    	    	 error_log(json_encode($record, JSON_HEX_TAG));
+		         fputcsv($handler, $recordArray);
+			}
+		    fclose($handler);
 		return;
 	}
 
 	if ($action == 'load') {
 			if (($handler = fopen("wp-content/plugins/rasp/rasp_data.csv", "r")) !== FALSE) {
-					//$eventArr = array();
-					class EventObj{
-						public $event_begin_time;
-						public $event_category;
-						public $event_day_of_week;
-						public $event_description;
-						public $event_end_time;
-						public $event_name;
-						public $event_place;
-						public $event_show;
-						public $event_url;
-						public $saved;
-						public $date;
-						public $num_in_rasp_model;
-						public $unicId;
+				global $wpdb;
+            	//$table_name = $wpdb->prefix . 'rasp_rasp';
+            	$table_name = 'wp_rasp_rasp';
+            	$charset_collate = $wpdb->get_charset_collate();
+            	if (!empty($wpdb->error))
+            		wp_die($wpdb->error);
+                $delete = $wpdb->query("TRUNCATE TABLE $table_name");
+                $recordKeys = fgetcsv($handler);
+                error_log(json_encode($recordKeys, JSON_HEX_TAG));
+                error_log('File input to DB');
 
-						// function toString(){
-						// 	return 	"-"	. " event_begin_time: " . $this->event_begin_time . " event_day_of_week: " . $this->event_day_of_week . " event_description: " . $this->event_description	. " event_name: " . $this->event_name;
-						// }
-					}
+                $requestArray = array();
+                $recordCounter = 0;
+				while( !feof($handler )){
+    		        	    $recordsArray[$recordCounter] = fgetcsv($handler);
+    		        	  //  error_log(json_encode($recordsArray, JSON_HEX_TAG));
+    		        	   // error_log($recordsArray[$recordCounter][1]);
+    		        	    $recordCounter ++;
+    		        	};
 
-					//while (($str = fgetcsv($handler)) !== FALSE) {
+    		        	error_log(json_encode($recordsArray, JSON_HEX_TAG));
+                              $i=0;
+                              $requestArray["event_begin_time"] = $recordsArray[$i][1];
+                              $requestArray["event_end_time"] = $recordsArray[$i][2];
+                              $requestArray["event_day_of_week"] = intval($recordsArray[$i][3]);
+                              $requestArray["event_name"] = $recordsArray[$i][4];
+                              $requestArray["event_place"] =  $recordsArray[$i][5];
+                              $requestArray["event_description"] = $recordsArray[$i][6];
+                              $requestArray["event_url"] = $recordsArray[$i][7];
+                              $requestArray["event_category"] = intval($recordsArray[$i][8]);
+                              $requestArray["event_show"] = intval($recordsArray[$i][9]);
+                              $requestArray["unic"] = intval($recordsArray[$i][10]);
+                 //       $wpdb->insert(
+                 //          $table_name,
+                  //         $requestArray,
+                 //          array( '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d'  )
+                 //      );
 
-					$raspArr = array();
-					while(! feof($handler)){
-
-						$str = fgetcsv($handler);
-							$eventObj = new EventObj;
-							$eventObj->event_begin_time = $str[0];
-							$eventObj->event_category = $str[1];
-							$eventObj->event_day_of_week = $str[2];
-							$eventObj->event_description = $str[3];
-							$eventObj->event_end_time = $str[4];
-							$eventObj->event_name = $str[5];
-							$eventObj->event_place = $str[6];
-							$eventObj->event_show = $str[7];
-							$eventObj->event_url = $str[8];
-							$eventObj->saved = $str[9];
-							$eventObj->date = $str[10];
-							$eventObj->num_in_rasp_model = $str[11];
-							$eventObj->unicId = $str[12];
-						//error_log(json_encode($eventObj, JSON_HEX_TAG));
-						//array_push($raspArr, $eventObj);
-						//error_log($eventObj -> toString());
-						$raspArr[] =  $eventObj;
-						//error_log(implode(" --- ", $eventObj));
-						//error_log(json_encode($eventObj, JSON_HEX_TAG));
-						//error_log($eventObj->toString());
-
-					}
 					fclose($handler);
-					array_pop($raspArr);
-
-					//error_log(implode(" --- ", $raspArr));
-					//error_log(json_encode($raspArr, JSON_HEX_TAG));
-					$handler = fopen("wp-content/plugins/rasp/rasp_data.txt", 'w');
-					//$rasp = ($request["raspMod"]);
-					$to_file = json_encode($raspArr, JSON_HEX_TAG);
-					error_log($to_file);
-					fputs($handler, $to_file);
-					fclose($handler);
-
+					return;
 		}
 	}
 }
+ //       1     2     3    4     5      6     7     8    9     10
