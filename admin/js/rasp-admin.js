@@ -8,12 +8,13 @@
 
         let response = await fetch('/wp-json/rasp/v1/raspread', {
             method: 'post',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({action: 'read'})
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'read' })
         });
         let rasp = await response.json();
         rasp = JSON.parse(rasp);
         let raspController = new RaspController(rasp);
+        raspController.raspView.tick('main');
     }
 
     /***************************** End of main() ******************************************* */
@@ -30,7 +31,7 @@
                 let btn_functionality = element.originalEvent.path[0].className;
                 if (btn_functionality.includes('save')) {
                     this.raspModel.saveModeltoCSV();
-					$.notify("Access granted", "success");
+                    $.notify("Access granted", "success");
                     //alert("Saved to file rasp_data.txt in rasp folder of server");
                 }
                 if (btn_functionality.includes('btn_load')) {
@@ -46,7 +47,7 @@
                 }
             }.bind(this));
 
-			//upload file
+            //upload file
             $("#inp-file").on("change", function (element) {
                 if (element.target.files.length > 1) {
                     alert("Only one file at once");
@@ -77,6 +78,7 @@
             this.createForm();
             this.num_of_colls = 3;
             this.currentFormID = 0;	//num of event in table for form/ Set - in show form, use in save btn in form
+            this.tick = this._tick.bind(this);
         }
 
         updateView() {
@@ -104,35 +106,35 @@
             if (this.rasp_model.sort_col == this.rasp_model.sortByTime) $(".th-time-col").append(` ^`);
             if (this.rasp_model.sort_col == this.rasp_model.sortByName) $(".th-name-col").append(` ^`);
             if (this.rasp_model.sort_col == this.rasp_model.sortByPlace) $(".th-place-col").append(` ^`);
-			if (this.rasp_model.sort_col == this.rasp_model.sortByShow) $(".th-show_col").append(` ^`);
+            if (this.rasp_model.sort_col == this.rasp_model.sortByShow) $(".th-show_col").append(` ^`);
 
-			//************************************************ Sortings *********************************************************
-			{
-				$('.admin-grid-container-div-th').on("click", function (element) {
-					let btn_functionality = element.originalEvent.path[0].className;
-					//console.log('btn_functionality ---', btn_functionality); //,  .classList[0]);
-					if (btn_functionality.includes('th-day-col')) {
-						this.rasp_model.sortByDay();
-						this.updateView();
-					}
-					if (btn_functionality.includes('th-time-col')) {
-						this.rasp_model.sortByTime();
-						this.updateView();
-					}
-					if (btn_functionality.includes('th-name-col')) {
-						this.rasp_model.sortByName();
-						this.updateView();
-					}
-					if (btn_functionality.includes('th-place-col')) {
-						this.rasp_model.sortByPlace();
-						this.updateView();
-					}
-					if (btn_functionality.includes('th-show_col')) {
-						this.rasp_model.sortByShow();
-						this.updateView();
-					}
-				}.bind(this));
-			}
+            //************************************************ Sortings *********************************************************
+            {
+                $('.admin-grid-container-div-th').on("click", function (element) {
+                    let btn_functionality = element.originalEvent.path[0].className;
+                    //console.log('btn_functionality ---', btn_functionality); //,  .classList[0]);
+                    if (btn_functionality.includes('th-day-col')) {
+                        this.rasp_model.sortByDay();
+                        this.updateView();
+                    }
+                    if (btn_functionality.includes('th-time-col')) {
+                        this.rasp_model.sortByTime();
+                        this.updateView();
+                    }
+                    if (btn_functionality.includes('th-name-col')) {
+                        this.rasp_model.sortByName();
+                        this.updateView();
+                    }
+                    if (btn_functionality.includes('th-place-col')) {
+                        this.rasp_model.sortByPlace();
+                        this.updateView();
+                    }
+                    if (btn_functionality.includes('th-show_col')) {
+                        this.rasp_model.sortByShow();
+                        this.updateView();
+                    }
+                }.bind(this));
+            }
 
             this.rasp_model.getArr().forEach((item, i) => {
                 adminGridContainer.append(`<div class="admin-grid-container-div-btn edit-btn agcd-row${i}" data-index = ${i}>Edit</div>`);
@@ -161,27 +163,36 @@
             adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
             adminGridContainer.append(`<div class="admin-grid-container-div-blank"></div>`);
 
-			const th = this;
-			$(`.edit-btn`).on("click", function (event) {
-				const ind = event.target.dataset.index;
-				th.showForm(ind);
-			}.bind(th));
+            const th = this;
+            $(`.edit-btn`).on("click", function (event) {
+                if (th.is_activated)
+                    return;
+                const ind = event.target.dataset.index;
+                th.showForm(ind);
+            }.bind(th));
 
-			$(`.copy-btn`).on("click", function (event) {
-				const ind = event.target.dataset.index;
-				const copiedEventInd = th.rasp_model.addEventCopy(ind);
-				th.showForm(copiedEventInd);
-			}.bind(th));
+            $(`.copy-btn`).on("click", function (event) {
+                if (th.is_activated)
+                    return;
+                const ind = event.target.dataset.index;
+                const copiedEventInd = th.rasp_model.addEventCopy(ind);
+                th.showForm(copiedEventInd);
+            }.bind(th));
 
-			$('.del-btn').on("click", function (event) {
-				const ind = event.target.dataset.index;
-				th.rasp_model.delEvent(ind);
-			}.bind(th));
+            $('.del-btn').on("click", function (event) {
+                if (th.is_activated)
+                    return;
+                const ind = event.target.dataset.index;
+                th.rasp_model.delEvent(ind);
+                th.updateView();
+            }.bind(th));
 
-			$('.newBtn').on("click", function(event){
-					let ind = th.rasp_model.addEventNew();
-					th.showForm(ind);
-			}.bind(th));
+            $('.new-btn').on("click", function (event) {
+                if (th.is_activated)
+                    return;
+                let ind = th.rasp_model.addEventNew();
+                th.showForm(ind);
+            }.bind(th));
 
             let ph = this.num_of_colls;
             $(".aditional").append(
@@ -194,7 +205,7 @@
 						<div><input type="checkbox" checked>Display Description</div>
 						<div><input type="checkbox" checked>Display URL Link</div>
 					<div>
-								<input type="number" class="addit_inp" id="down-num" min="0" max="32" placeholder=${ph}>
+								<input type="number" class="addit_inp" id="down-num" min="0" max="32"  value="3" >
 								<label for="scales">Number of rows</label>
 					</div>
 					<div>
@@ -214,13 +225,13 @@
 				</div>
 			`);
 
-           //this.rasp_controller.newBtn();
+            //this.rasp_controller.newBtn();
             this.rasp_controller.fileBtn();
             //this.rasp_controller.sortBtn();
             this.rasp_controller.additInp();
         }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         createForm(numOfEvent) {
             $('#wpbody-content').append('<div class="edit-area"></div>');
             {
@@ -274,7 +285,7 @@
                 that.is_activated = false;
             }.bind(that));
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////
             $('#form_btn_save').on('click', function (event) {
                 const numOfEvent = $('#form_btn_save').data("numOfEvent");
                 console.log('numOfEvent = ', numOfEvent);
@@ -356,6 +367,10 @@
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
         }
+
+        _tick(_tickInfo) {
+            console.log(`Tick , ${_tickInfo} tick this =`, this);
+        }
     }
 
     /**************************** RaspModel Class ******************************************** */
@@ -379,12 +394,12 @@
         }
 
         updateEvent(numOfEvent) {
-            console.log('Rasp model updateEvent numOfEvent  - ', numOfEvent,);
+            console.log('Rasp model updateEvent numOfEvent  - ', numOfEvent);
             let req_body = JSON.stringify(this.raspMod[numOfEvent]);
             //console.log("saving", req_body);
             this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', {
                 method: 'post',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: req_body
             });
         }
@@ -395,7 +410,7 @@
             console.log("saving", req_body);
             this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', {
                 method: 'post',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: req_body
             });
         }
@@ -416,7 +431,7 @@
             console.log(req_body);
             this.srv_ans = fetch('/wp-json/rasp/v1/raspfile', {
                 method: 'post',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: req_body
             });
         }
@@ -427,7 +442,7 @@
             console.log(req_body);
             this.srv_ans = fetch('/wp-json/rasp/v1/raspfile', {
                 method: 'post',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: req_body
             });
         }
@@ -441,23 +456,6 @@
         getEvent(ind) {
             return this.raspMod[ind];
         }
-
-        //
-        // updateEvent(index, event){
-        //
-        // 	this.raspMod[ind].event_begin_time = event.event_begin_time;
-        // 	this.raspMod[ind].event_category = event.event_category;
-        // 	this.raspMod[ind].event_day_of_week = event.event_day_of_week;
-        // 	this.raspMod[ind].event_description = event.event_description;
-        // 	this.raspMod[ind].event_end_time = event.event_end_time;
-        // 	this.raspMod[ind].event_name = event.event_name;
-        // 	this.raspMod[ind].event_place = event.event_place;
-        // 	this.raspMod[ind].event_show = event.event_show;
-        // 	this.raspMod[ind].event_url = event.event_url;
-        // 	this.raspMod[ind].id = event.id;
-        // 	//this.raspMod[ind].saved = false;
-        // }
-
 
         getArr() {
             return this.raspMod;
@@ -491,8 +489,8 @@
             console.log(this.raspMod);
             fetch('http://raspwp/wp-json/rasp/v1/raspdel', {
                 method: 'post',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({action: 'del', id: this.raspMod[num].id})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'del', id: this.raspMod[num].id })
             });
             this.raspMod[num].killYourself();
             this.raspMod.splice(num, 1);
@@ -691,7 +689,7 @@
             if (!this.saved)
                 return null;
             if (!isNaN(this.id))
-            //fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.id }) });
+                //fetch('http://raspwp/wp-json/rasp/v1/raspdel', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'del', id: this.id }) });
                 return null;
         }
 

@@ -46,7 +46,7 @@ class Rasp_Activator
     		  event_day_of_week int DEFAULT 0,
     		  event_name tinytext NOT NULL,
     		  event_place varchar(512),
-    		  event_description varchar(512),
+   			  event_description varchar(512),
     		  event_url varchar(512) DEFAULT '',
     		  event_category int DEFAULT 0,
     		  event_show bool DEFAULT 1,
