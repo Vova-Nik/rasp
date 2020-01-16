@@ -27,12 +27,13 @@
         }
 
         fileBtn() {
-            $(".form_act_button").on("click", function (element) {
+            $(".file-oper-form").on("click", function (element) {
+                // console.log("fileBtn in RaspController!!");
                 let btn_functionality = element.originalEvent.path[0].className;
                 if (btn_functionality.includes('save')) {
                     this.raspModel.saveModeltoCSV();
-                    $.notify("Access granted", "success");
-                    //alert("Saved to file rasp_data.txt in rasp folder of server");
+                    //$.notify("Access granted", "success");
+                    alert("Saved to file rasp_data.txt in rasp folder of server");
                 }
                 if (btn_functionality.includes('btn_load')) {
                     this.raspModel.loadModelfromCSV();
@@ -200,35 +201,48 @@
 			<div class="common-settings-form">
 				<div class="settings-form">
 						<p>Table. Way to show settings</p>
-						<div><input type="checkbox" checked>Display Name</div>
-						<div><input type="checkbox" checked>Display Place</div>
-						<div><input type="checkbox" checked>Display Description</div>
-						<div><input type="checkbox" checked>Display URL Link</div>
+						<div><input type="checkbox" class="addit_inp_name" checked>Display Name</div>
+						<div><input type="checkbox" class="addit_inp_place" checked>Display Place</div>
+						<div><input type="checkbox" class="addit_inp_desc" checked>Display Description</div>
+						<div><input type="checkbox" class="addit_inp_url" checked>Display URL Link</div>
 					<div>
 								<input type="number" class="addit_inp" id="down-num" min="0" max="32"  value="3" >
 								<label for="scales">Number of rows</label>
 					</div>
 					<div>
-								<input type="checkbox" class="addit_inp" id="down-chk" name="Adaptive" checked>
+								<input type="checkbox" class="addit_inp_adaptive"  name="Adaptive" checked>
 								<label for="scales">Adaptive</label>
 					</div>
-					<div  class="form_act_button btn_save">Save</div>
+					<div  class="form_act_button btn_save_settings">Save</div>
 		  		</div>
 					<div class="file-oper-form">
 							<p>Local .csv file</p>
-							<div  class="form_act_button btn_save">Save to File</div>
+							<div  class="form_act_button btn_save_file">Save to File</div>
 							<div  class="form_act_button btn_load">Load from File</div>
 							<div  class="form_act_button btn_download">Download</div>
 							<input id="inp-file" name="myCsvFile" type="file">
 							<label class="form_act_button btn_upload" for="inp-file">Upload</label>
 					</div>
 				</div>
-			`);
+            `);
+
+            let cont = this;
+            $(".form_act_button").on("click", function (event) {
+                let settings = cont.rasp_model.rasp_settings;
+                settings.disp_name = $(".addit_inp_name").prop("checked");
+                settings.disp_place = $(".addit_inp_place").prop("checked");
+                settings.disp_descr = $(".addit_inp_desc").prop("checked");
+                settings.disp_url = $(".addit_inp_url").prop("checked");
+                settings.adaptive = $(".addit_inp_adaptive").prop("checked");
+                settings.num_of_rows = $("#down-num").prop("value");
+                let tt = JSON.stringify(cont.rasp_model.rasp_settings);
+                console.log('form_act_button on click', tt);
+            }).bind(cont);
 
             //this.rasp_controller.newBtn();
             this.rasp_controller.fileBtn();
             //this.rasp_controller.sortBtn();
-            this.rasp_controller.additInp();
+            //this.rasp_controller.additInp();
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -391,6 +405,7 @@
             this.sort_col = this.sortByDay;
             this.srv_ans = 0;
             this.request_for_server = 'save'; //read, write - for txt, save load for .csv
+            this.rasp_settings = {};
         }
 
         updateEvent(numOfEvent) {
@@ -413,22 +428,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: req_body
             });
+            
         }
-
-        // editDBRecord(numInModel){
-        // 	let req_body = JSON.stringify(this.raspMod[numInModel]);
-        // 	console.log("saving", req_body);
-        // 	this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: req_body });
-        // }
-        //
-        // copyRecord(numInModel){
-        // 	return numInModel;
-        // }
 
         saveModeltoCSV() {
             this.request_for_server = 'save';
             let req_body = JSON.stringify(this);
-            console.log(req_body);
+            //console.log(req_body);
             this.srv_ans = fetch('/wp-json/rasp/v1/raspfile', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
@@ -439,7 +445,7 @@
         loadModelfromCSV() {
             this.request_for_server = 'load';
             let req_body = JSON.stringify(this);
-            console.log(req_body);
+            //console.log(req_body);
             this.srv_ans = fetch('/wp-json/rasp/v1/raspfile', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },

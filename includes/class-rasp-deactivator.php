@@ -45,6 +45,18 @@ class Rasp_Deactivator {
 			 $sql = "DROP TABLE IF EXISTS $table_name;";
 			 $wpdb->query($sql);
 			delete_option("my_plugin_db_version");
+
+			global $wpdb;
+			$table_name = $wpdb->prefix . 'rasp_rasp';
+
+			$sql = "DROP TABLE IF EXISTS $table_name;";
+			$wpdb->query($sql);
+			delete_option("rasp_plugin_db_version");
+
+			$table_name = $wpdb->prefix . 'options';
+			$wpdb->delete( $table_name, array( 'option_name' => 'rasp_plugin_data' ) );
+
+
 	}
 
 	public function __toString()

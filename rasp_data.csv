@@ -1,5 +1,8 @@
 id,event_begin_time,event_end_time,event_day_of_week,event_name,event_place,event_description,event_url,event_category,event_show,unic
-1,11:00:00,00:00:00,1,"New event","lorem ipsum",description,http://raspwp/wp-admin/options-general.php?page=rasp-options,0,1,0
-2,11:00:00,00:00:00,2,"New event","lorem ipsum","descrip,tion",http://raspwp/wp-admin/options-general.php?page=rasp-options,0,2,0
-3,11:00:00,00:00:00,3,"New event","lorem ipsum",description,http://raspwp/wp-admin/options-general.php?page=rasp-options,0,3,0
-4,11:00:00,00:00:00,4,"New event","lorem ipsum",description,http://raspwp/wp-admin/options-general.php?page=rasp-options,0,4,0
+1,19:00:00,,0,"Meeting Sofi","Канатная 28","Lorem ipsum dolor sit amet",https://www.lipsum.com/,0,1,0
+2,19:00:00,,1,"Meeting Stupi","Ицхака Рабина 7","sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",https://www.google.com,0,4,0
+3,18:00:00,,3,"Meeting PosKOt","Канатная 28","Excepteur sint occaecat cupidatat non proident",https://codex.wordpress.org/Option_Reference,0,1,0
+4,19:00:00,,2,"Meeting Sofi","Канатная 28","Ut enim ad minim veniam",https://www.w3schools.com,0,3,0
+5,19:00:00,,4,"Meeting Sofi","Канатная 28","Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",https://www.olx.ua/,0,6,0
+6,12:00:00,,1,Rassvet,"Ицхака рабина 7 (РЦ Ступени 2 эт)","consectetur adipiscing elit",https://learn.javascript.ru/try-catch,0,2,0
+7,12:00:00,,6,Rassvet,"Ицхака рабина 7 (РЦ Ступени 2 эт)","quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",https://www.tutorialrepublic.com/f,0,5,0

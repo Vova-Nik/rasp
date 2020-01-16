@@ -134,7 +134,21 @@ class Rasp_Activator
     				'event_day_of_week' => '6' //d
     			),
     			array('%s', '%s', '%s', '%d')
-    		);
+			);
+			
+			$table_name = $wpdb->prefix . 'options';
+			$charset_collate = $wpdb->get_charset_collate();
+			$wpdb->insert(
+    			$table_name,
+    			array(
+    				'option_name' => 'rasp_plugin_data',   //s
+    				'option_value' => 'rasp_plugin_data!!!!!!',	//s
+    				'autoload' => 'no', //s
+    			),
+    			array('%s', '%s', '%s')
+			);
+			error_log('rasp_plugin_data rasp-activator');
+
     	}
 
     	public function __toString()
