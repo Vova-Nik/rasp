@@ -5,7 +5,6 @@
 
     async function rasp_ready() {
         //let rasp = await read_from_db();
-
         let response = await fetch('/wp-json/rasp/v1/raspread', {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
@@ -13,53 +12,22 @@
         });
         let rasp = await response.json();
         rasp = JSON.parse(rasp);
+
+        let raspModel = new RaspModel(rasp); //RaspModel
+        let raspView = new RaspView(raspModel);
+
         let raspController = new RaspController(rasp);
-        raspController.raspView.tick('main');
+
+        raspView.tick('main');
     }
 
     /***************************** End of main() ******************************************* */
 
     /***************************** RaspController ************************* */
     class RaspController {
-        constructor(rasp) {
-            this.raspModel = new RaspModel(rasp); //RaspModel
-            this.raspView = new RaspView(this.raspModel, this);
-        }
-
-        fileBtn() {
-            $(".file-oper-form").on("click", function (element) {
-                // console.log("fileBtn in RaspController!!");
-                let btn_functionality = element.originalEvent.path[0].className;
-                if (btn_functionality.includes('save')) {
-                    this.raspModel.saveModeltoCSV();
-                    //$.notify("Access granted", "success");
-                    alert("Saved to file rasp_data.txt in rasp folder of server");
-                }
-                if (btn_functionality.includes('btn_load')) {
-                    this.raspModel.loadModelfromCSV();
-                    //alert("DB loaded from file rasp_data.txt in rasp folder of server");
-                    location.reload();
-                }
-                if (btn_functionality.includes('download'))
-                    window.open('/wp-content/plugins/rasp/rasp_data.csv');
-                //<p><a href="images/xxx.jpg" download>Скачать файл</a>
-
-                if (btn_functionality.includes('upload')) {
-                }
-            }.bind(this));
-
-            //upload file
-            $("#inp-file").on("change", function (element) {
-                if (element.target.files.length > 1) {
-                    alert("Only one file at once");
-                    return;
-                }
-                if (element.target.files[0].name.endsWith('.csv') != true) {
-                    alert("Only correct .csv file");
-                    return;
-                }
-                console.log("file selected", element.target.files[0].name);
-            });
+        constructor() {
+            // this.raspModel = new RaspModel(rasp); //RaspModel
+            // this.raspView = new RaspView(this.raspModel, this);
         }
 
         additInp() {
@@ -71,9 +39,9 @@
 
     /**************************** RaspView  Class **************************** */
     class RaspView {
-        constructor(raspModel, raspCtrl) {
+        constructor(raspModel) {
             this.rasp_model = raspModel;
-            this.rasp_controller = raspCtrl;
+            // this.rasp_controller = raspCtrl;
             this.updateView();
             this.is_activated = false;
             this.createForm();
@@ -196,7 +164,36 @@
             }.bind(th));
 
             let ph = this.num_of_colls;
-            $(".aditional").append(
+            
+            //let settings = JSON.parse(this.rasp_model.loadSettings());
+            let settings = this.rasp_model.loadSettings();
+
+           // console.log('settings --- ', settings, 'type -', typeof 'settings');
+            console.log('settings --- ', this.rasp_model.rasp_settings);
+
+           // let WayToShowSettings = settings.map(this.transfer);
+            //console.log('WayToShowSettings', WayToShowSettings);
+           // let WayToShowSettings map(settings, transfer)
+            // = {
+            //     addit_inp_name: 'checked',
+            //     addit_inp_place: 'checked',
+            //     addit_inp_desc: 'checked',
+            //     addit_inp_url: 'checked',
+            //     addit_inp_adaptive: 'checked',
+            //     addit_inp: 3,
+            // };
+
+
+
+                function transfer(val){
+                    if(val === true)
+                        return 'checked';
+                    if(val === false)
+                        return '';
+                    return parseInt(val);
+            }
+
+            {$(".aditional").append(
                 `
 			<div class="common-settings-form">
 				<div class="settings-form">
@@ -224,7 +221,8 @@
 							<label class="form_act_button btn_upload" for="inp-file">Upload</label>
 					</div>
 				</div>
-            `);
+            `);}
+
 
             let cont = this;
             $(".form_act_button").on("click", function (event) {
@@ -237,12 +235,49 @@
                 settings.num_of_rows = $("#down-num").prop("value");
                 let tt = JSON.stringify(cont.rasp_model.rasp_settings);
                 console.log('form_act_button on click', tt);
+
+                cont.rasp_model.saveSettings();
+
             }).bind(cont);
 
             //this.rasp_controller.newBtn();
-            this.rasp_controller.fileBtn();
+            //this.rasp_controller.fileBtn();
             //this.rasp_controller.sortBtn();
             //this.rasp_controller.additInp();
+
+            $(".file-oper-form").on("click", function (element) {
+                // console.log("fileBtn in RaspController!!");
+                let btn_functionality = element.originalEvent.path[0].className;
+                if (btn_functionality.includes('save')) {
+                    this.rasp_model.saveModeltoCSV();
+                    //$.notify("Access granted", "success");
+                    alert("Saved to file rasp_data.csv in rasp folder of server");
+                }
+                if (btn_functionality.includes('btn_load')) {
+                    this.rasp_model.loadModelfromCSV();
+                    //alert("DB loaded from file rasp_data.txt in rasp folder of server");
+                    location.reload();
+                }
+                if (btn_functionality.includes('download'))
+                    window.open('/wp-content/plugins/rasp/rasp_data.csv');
+                //<p><a href="images/xxx.jpg" download>Скачать файл</a>
+
+                if (btn_functionality.includes('upload')) {
+                }
+            }.bind(this));
+
+            //upload file
+            $("#inp-file").on("change", function (element) {
+                if (element.target.files.length > 1) {
+                    alert("Only one file at once");
+                    return;
+                }
+                if (element.target.files[0].name.endsWith('.csv') != true) {
+                    alert("Only correct .csv file");
+                    return;
+                }
+                console.log("file selected", element.target.files[0].name);
+            });
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,8 +424,9 @@
 
     /**************************** RaspModel Class ******************************************** */
     class RaspModel {
-        constructor(rasp) {
+        constructor(rasp, rasp_view) {
             this.raspMod = new Array();
+            this.rasp_view = rasp_view;
             let rEvnt = '';
             if (rasp.length >= 1) {
                 rasp.forEach((evnt, i) => {
@@ -428,13 +464,14 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: req_body
             });
-            
+
         }
 
         saveModeltoCSV() {
             this.request_for_server = 'save';
+
             let req_body = JSON.stringify(this);
-            //console.log(req_body);
+            console.log('saveModeltoCSV', req_body);
             this.srv_ans = fetch('/wp-json/rasp/v1/raspfile', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
@@ -451,6 +488,35 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: req_body
             });
+        }
+
+        saveSettings() {
+            //this.request_for_server = 'save_settings';
+            // let req = {
+            //     action: 'save_settings',
+            //     settings: JSON.stringify(this.rasp_settings),
+            // };
+            //let req_body = JSON.stringify(req);
+            this.srv_ans = fetch('/wp-json/rasp/v1/raspSettings', {
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'save_settings',
+                    settings: JSON.stringify(this.rasp_settings)
+                }),
+            });
+        }
+
+        async loadSettings() {
+            let response = await fetch('/wp-json/rasp/v1/raspSettings', {
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'load_settings' })
+            });
+            let settings = await response.json();
+            this.rasp_settings = JSON.parse(settings.option_value);
+            console.log('settings = ', this.rasp_settings);
+            this.rasp_settings;
         }
 
         getEventCopy(ind) {

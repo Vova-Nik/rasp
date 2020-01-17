@@ -117,7 +117,7 @@ class Rasp_Activator
     		$wpdb->insert(
     			'wp_rasp_rasp',
     			array(
-    				'event_name' => 'Rassvet',   //s
+    				'event_name' => 'Rassvet',   //s 
     				'event_begin_time' => '12:00',	//s
     				'event_place' => 'Ицхака рабина 7 (РЦ Ступени 2 эт)', //s
     				'event_day_of_week' => '1' //d
@@ -142,7 +142,7 @@ class Rasp_Activator
     			$table_name,
     			array(
     				'option_name' => 'rasp_plugin_data',   //s
-    				'option_value' => 'rasp_plugin_data!!!!!!',	//s
+    				'option_value' => "\"disp_name\":true,\"disp_place\":true,\"disp_descr\":true,\"disp_url\":true,\"adaptive\":true,\"num_of_rows\":\"3\"",	//s
     				'autoload' => 'no', //s
     			),
     			array('%s', '%s', '%s')

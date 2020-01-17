@@ -107,7 +107,7 @@ function rasp_restAPI_point_write(WP_REST_Request $request)
 function rasp_restAPI_point_file(WP_REST_Request $request)
 {
     $action = $request['request_for_server']; //load or save
-    error_log($action);
+    error_log('Request Action - ' . $action);
     /************************Write file**************************************** */
     if ($action == 'save') {
         global $wpdb;
@@ -170,7 +170,7 @@ function rasp_restAPI_point_file(WP_REST_Request $request)
                 $recordsArray[$recordCounter] = fgetcsv($handler);
                 $recordCounter++;
             }
-            
+
             error_log('$RecordsArray = ' . json_encode($recordsArray, JSON_HEX_TAG));
             $requestArray = array();
             $requestFormatArray = array();
@@ -207,4 +207,65 @@ function rasp_restAPI_point_file(WP_REST_Request $request)
             return true;
         }
     }
+
+}
+
+function rasp_restAPI_point_settings(WP_REST_Request $request)
+{
+   $action = $request['action'];
+   error_log('rasp_restAPI_point_settings!!! action = ' .$action); 
+   $settings = $request['settings'];
+   //error_log('rasp_restAPI_point_settings!!!  ' .$rBody);  //$request['settings']);
+   myLog($settings);
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'options';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    if ($action == 'save_settings'){
+
+        $wpdb->update(
+            $table_name,
+            array(
+                'option_value' => $settings,
+            ),
+            array('option_name' => "rasp_plugin_data"),
+            array('%s'),
+            array('%s')
+        );
+        return;
+    }
+
+    if ($action == 'load_settings'){
+        $results = $wpdb->get_results("SELECT * FROM $table_name WHERE option_name ='rasp_plugin_data'");
+        myLog($results[0]);
+    }
+    return $results[0];
+}
+
+function myLog($toLog){
+
+   $type =  gettype ($toLog);
+    if($type == "string" ){
+        error_log('myLog. type = String ' .$toLog);
+        return;
+    }
+
+    if($type == "array" ){
+        error_log('myLog. type = Array ' .json_encode($toLog));
+        error_log('Array length = ' .count($toLog));
+        foreach((array)$toLog as $key => $item){
+            error_log($key .' -- ' .$item);
+        }
+        return;
+    }
+
+    if($type == "object" ){
+        error_log('myLog. type = object ');
+        foreach($toLog as $key => $item)
+        error_log($key .' -- ' .$item);
+        return;
+    }
+
+    error_log('Other type ' .$toLog);
 }
