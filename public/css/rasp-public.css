@@ -39,5 +39,7 @@
     color: black;
 
   }
-
+  #rasp_settings{
+     visibility: hidden;
+  }
   

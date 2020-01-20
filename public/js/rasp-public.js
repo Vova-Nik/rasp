@@ -6,14 +6,19 @@
 	function rasp_ready() {
 
 		/* Getting data from PHP thrue DOM */
-		let events_list_array = new Array();
+		let events_list_array = []; //new Array();
 		let events_list = document.getElementsByClassName("event_data_element");
 		for (let i = 0; i < events_list.length; i++) {
 			events_list_array[i] = JSON.parse(events_list[i].textContent);
 		}
 		events_list = null;
 
+		const settings = JSON.parse(document.getElementById("rasp_settings").innerHTML); //document.getElementById
+		// for (let key in settings){
+		// 	console.log(key, ' - ',  settings[key]);
+		// }
 		const today = new Date();
+
 		//var today = new Date('20 nov 2019 19:00:00');
 		console.log("Sivodni " + today);
 		let current_moment = today.getDay() * 10000 + today.getHours() * 100 + today.getMinutes();
@@ -24,11 +29,11 @@
 		* if "event_begin_time_formated" less then current -> event_begin_time_formated moving to next week (+70000)
 		*/
 
-		let event_class_array = new Array();
+		let event_class_array = []; //new Array();
 		events_list_array.forEach(function (element, num) {
 			event_class_array[num] = new Event(element, today);
 		});
-		//console.log(event_class_array);
+
 		/*---------------------------------------------------------------------------------------------------*/
 		event_class_array.sort(arr_compare);
 		console.log(event_class_array);
@@ -50,21 +55,52 @@
 		document.querySelector(".before-grid").innerHTML += ' ' + sDayOfweek + ' ' + current_full_date;
 		let today_day_of_week = today.getDay();
 
-		let num_to_show = 6;
-		let num_to_show_calc = 0;
-		for (let i = 0; i < event_class_array.length; i++) {
-			if (event_class_array[i].event_data.day_offset == 0)
-				num_to_show_calc++;
+		let num_to_show = settings.num_of_rows;
+		if (num_to_show > event_class_array.length)
+			num_to_show = event_class_array.length;
+
+		if (settings.adaptive) {
+			let num_to_show_calc = 0;
+			for (let i = 0; i < event_class_array.length; i++) {
+				if (event_class_array[i].event_data.day_offset == 0)
+					num_to_show_calc++;
+			}
+			if (num_to_show_calc > num_to_show)
+				num_to_show = num_to_show_calc; // to show all today events, in case if them less then num_to_show
 		}
-		if (num_to_show_calc > num_to_show)
-			num_to_show = num_to_show_calc; // to show all today events, in case if them less then num_to_show
+
+		//let grid_props = '[day] minmax(5em, auto) [time] minmax(5em, auto)';
+		let grid_props = '[day] auto [time] auto';
+		let grid_width = 2;
+
+		if (settings.disp_name) {
+			grid_props += ' [name] auto';
+			grid_width++;
+		}
+		if (settings.disp_place) {
+			grid_props += ' [place] auto';
+			grid_width++;
+		}
+		if (settings.disp_descr) {
+			grid_props += ' [description] auto';
+			grid_width++;
+		}
+
+		$(".grid-container").css("grid-template-columns", grid_props);
+
+		//debugger;
+		//grid-template-columns: [day] 5em [time] 5em [name] auto [place] auto [description] auto;
+		console.log('grid_props --', grid_props);
 
 		for (let i = 0; i < num_to_show; i++) {
 			if (event_class_array[i].event_data.e_show == 0) continue;
-				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayDate} </div>`);
-				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayTime} </div>`);
+			$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayDate} </div>`);
+			$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayTime} </div>`);
+			if (settings.disp_name)
 				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayName} </div>`);
+			if (settings.disp_place)
 				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayPlace} </div>`);
+			if (settings.disp_descr)
 				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayDescription} </div>`);
 		}
 	}

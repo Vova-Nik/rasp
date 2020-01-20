@@ -1,33 +1,25 @@
 (function ($) {
     'use strict';
 
-    document.addEventListener("DOMContentLoaded", rasp_ready);
+    document.addEventListener("DOMContentLoaded", main);
 
-    async function rasp_ready() {
-        //let rasp = await read_from_db();
-        let response = await fetch('/wp-json/rasp/v1/raspread', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'read' })
-        });
-        let rasp = await response.json();
-        rasp = JSON.parse(rasp);
+    /***************************** RaspController ****************************************** */
 
-        let raspModel = new RaspModel(rasp); //RaspModel
-        let raspView = new RaspView(raspModel);
 
-        let raspController = new RaspController(rasp);
-
-        raspView.tick('main');
+    function main() {
+        let raspController = new RaspController();
     }
 
-    /***************************** End of main() ******************************************* */
-
-    /***************************** RaspController ************************* */
     class RaspController {
+
         constructor() {
-            // this.raspModel = new RaspModel(rasp); //RaspModel
-            // this.raspView = new RaspView(this.raspModel, this);
+            this._raspModel = new RaspModel(this); //RaspModel
+            this._raspModel.init();
+        }
+
+        /******************* calback runs when all data came frov server ****************** */
+        runRaspWiev() {
+            this.raspView = new RaspView(this._raspModel, this);
         }
 
         additInp() {
@@ -37,17 +29,29 @@
         }
     }
 
+    /***************************** End of main() ******************************************* */
+
+
+
     /**************************** RaspView  Class **************************** */
     class RaspView {
-        constructor(raspModel) {
+        constructor(raspModel, raspCtrl) {
             this.rasp_model = raspModel;
-            // this.rasp_controller = raspCtrl;
+            this.rasp_controller = raspCtrl;
             this.updateView();
             this.is_activated = false;
             this.createForm();
             this.num_of_colls = 3;
             this.currentFormID = 0;	//num of event in table for form/ Set - in show form, use in save btn in form
             this.tick = this._tick.bind(this);
+        }
+
+        transfer(val) {
+            if (val === true)
+                return 'checked';
+            if (val === false)
+                return '';
+            return parseInt(val);
         }
 
         updateView() {
@@ -164,16 +168,10 @@
             }.bind(th));
 
             let ph = this.num_of_colls;
-            
-            //let settings = JSON.parse(this.rasp_model.loadSettings());
-            let settings = this.rasp_model.loadSettings();
 
-           // console.log('settings --- ', settings, 'type -', typeof 'settings');
-            console.log('settings --- ', this.rasp_model.rasp_settings);
-
-           // let WayToShowSettings = settings.map(this.transfer);
+            // let WayToShowSettings = settings.map(this.transfer);
             //console.log('WayToShowSettings', WayToShowSettings);
-           // let WayToShowSettings map(settings, transfer)
+            // let WayToShowSettings map(settings, transfer)
             // = {
             //     addit_inp_name: 'checked',
             //     addit_inp_place: 'checked',
@@ -182,32 +180,33 @@
             //     addit_inp_adaptive: 'checked',
             //     addit_inp: 3,
             // };
+            /*
+            disp_name: true
+            disp_place: false
+            disp_descr: false
+            disp_url: false
+            adaptive: true
+            num_of_rows: "5"
+            */
 
+            let settings = this.rasp_model.rasp_settings;
 
-
-                function transfer(val){
-                    if(val === true)
-                        return 'checked';
-                    if(val === false)
-                        return '';
-                    return parseInt(val);
-            }
-
-            {$(".aditional").append(
-                `
+            {
+            $(".aditional").append(
+                    `
 			<div class="common-settings-form">
 				<div class="settings-form">
 						<p>Table. Way to show settings</p>
-						<div><input type="checkbox" class="addit_inp_name" checked>Display Name</div>
-						<div><input type="checkbox" class="addit_inp_place" checked>Display Place</div>
-						<div><input type="checkbox" class="addit_inp_desc" checked>Display Description</div>
-						<div><input type="checkbox" class="addit_inp_url" checked>Display URL Link</div>
+						<div><input type="checkbox" class="addit_inp_name addit_check" ${this.transfer(settings.disp_name)}>Display Name</div>
+						<div><input type="checkbox" class="addit_inp_place addit_check" ${this.transfer(settings.disp_place)}>Display Place</div>
+						<div><input type="checkbox" class="addit_inp_desc addit_check" ${this.transfer(settings.disp_descr)}>Display Description</div>
+						<div><input type="checkbox" class="addit_inp_url addit_check" ${this.transfer(settings.disp_url)}>Display URL Link</div>
 					<div>
-								<input type="number" class="addit_inp" id="down-num" min="0" max="32"  value="3" >
+								<input type="number" class="addit_inp " id="down-num" min="0" max="32"  value=${settings.num_of_rows } >
 								<label for="scales">Number of rows</label>
 					</div>
 					<div>
-								<input type="checkbox" class="addit_inp_adaptive"  name="Adaptive" checked>
+								<input type="checkbox" class="addit_inp_adaptive addit_check"  name="Adaptive" ${this.transfer(settings.adaptive)}>
 								<label for="scales">Adaptive</label>
 					</div>
 					<div  class="form_act_button btn_save_settings">Save</div>
@@ -221,29 +220,30 @@
 							<label class="form_act_button btn_upload" for="inp-file">Upload</label>
 					</div>
 				</div>
-            `);}
+            `);
+            }
 
+            $(".common-settings-form input").on("change", (event) => {
+                console.log("common-settings-form input");
 
+            });
+
+            // debugger;
             let cont = this;
             $(".form_act_button").on("click", function (event) {
-                let settings = cont.rasp_model.rasp_settings;
+                let settings = {}; //cont.rasp_model.rasp_settings;
                 settings.disp_name = $(".addit_inp_name").prop("checked");
                 settings.disp_place = $(".addit_inp_place").prop("checked");
                 settings.disp_descr = $(".addit_inp_desc").prop("checked");
                 settings.disp_url = $(".addit_inp_url").prop("checked");
                 settings.adaptive = $(".addit_inp_adaptive").prop("checked");
                 settings.num_of_rows = $("#down-num").prop("value");
-                let tt = JSON.stringify(cont.rasp_model.rasp_settings);
-                console.log('form_act_button on click', tt);
 
-                cont.rasp_model.saveSettings();
+                // let tt = JSON.stringify(cont.rasp_model.rasp_settings);
+                console.log('form_act_button on click', settings);
+                cont.rasp_model.saveSettings(settings);
 
             }).bind(cont);
-
-            //this.rasp_controller.newBtn();
-            //this.rasp_controller.fileBtn();
-            //this.rasp_controller.sortBtn();
-            //this.rasp_controller.additInp();
 
             $(".file-oper-form").on("click", function (element) {
                 // console.log("fileBtn in RaspController!!");
@@ -424,29 +424,60 @@
 
     /**************************** RaspModel Class ******************************************** */
     class RaspModel {
-        constructor(rasp, rasp_view) {
-            this.raspMod = new Array();
-            this.rasp_view = rasp_view;
+        constructor(rasp_ctrl) {
+            //this._rasp_view = rasp_view;
+            this._rasp_controller = rasp_ctrl;
+            this._raspMod = [];
+            this.srv_ans = 0;
+            this.request_for_server = 'save'; //read, write - for txt, save load for .csv
+            this.rasp_settings = {};
+        }
+
+        async init() {
+            let response = await fetch('/wp-json/rasp/v1/raspread', {             //loading data
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'read' })
+            });
+            let rasp = await response.json();
+            rasp = JSON.parse(rasp);
+
             let rEvnt = '';
             if (rasp.length >= 1) {
                 rasp.forEach((evnt, i) => {
                     rEvnt = new RaspEvent();
                     rEvnt.assignEvent(evnt, i);
                     rEvnt.num_in_rasp_model = i;
-                    this.raspMod.push(rEvnt);
+                    this._raspMod.push(rEvnt);
                 });
             }
+            response = await fetch('/wp-json/rasp/v1/raspSettings', {             //loading settings
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'load_settings' })
+            });
+            let settings = await response.json();
+            // debugger;
+            settings = JSON.parse(settings.option_value);
+
+            // this.rasp_settings = JSON.parse(settings);
+            this.rasp_settings = settings;
+
+
+            console.log('init model loadSettings settings = ', this.rasp_settings);
+            for (let key in this.rasp_settings)
+                console.log(key, this.rasp_settings[key]);
+
             this.num_of_rows = 3;
             this.adaptive = false;
             this.sort_col = this.sortByDay;
-            this.srv_ans = 0;
-            this.request_for_server = 'save'; //read, write - for txt, save load for .csv
-            this.rasp_settings = {};
+
+            this._rasp_controller.runRaspWiev();
         }
 
         updateEvent(numOfEvent) {
             console.log('Rasp model updateEvent numOfEvent  - ', numOfEvent);
-            let req_body = JSON.stringify(this.raspMod[numOfEvent]);
+            let req_body = JSON.stringify(this._raspMod[numOfEvent]);
             //console.log("saving", req_body);
             this.srv_ans = fetch('/wp-json/rasp/v1/raspwrite', {
                 method: 'post',
@@ -490,13 +521,9 @@
             });
         }
 
-        saveSettings() {
-            //this.request_for_server = 'save_settings';
-            // let req = {
-            //     action: 'save_settings',
-            //     settings: JSON.stringify(this.rasp_settings),
-            // };
-            //let req_body = JSON.stringify(req);
+        saveSettings(settings) {
+
+            this.rasp_settings = settings;
             this.srv_ans = fetch('/wp-json/rasp/v1/raspSettings', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
@@ -505,72 +532,61 @@
                     settings: JSON.stringify(this.rasp_settings)
                 }),
             });
-        }
-
-        async loadSettings() {
-            let response = await fetch('/wp-json/rasp/v1/raspSettings', {
-                method: 'post',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'load_settings' })
-            });
-            let settings = await response.json();
-            this.rasp_settings = JSON.parse(settings.option_value);
-            console.log('settings = ', this.rasp_settings);
-            this.rasp_settings;
+            //console.log("set-------------", JSON.stringify(this.rasp_settings));
         }
 
         getEventCopy(ind) {
             const ev = {};
-            Object.assign(ev, this.raspMod[ind]);
+            Object.assign(ev, this._raspMod[ind]);
             return ev;
         }
 
         getEvent(ind) {
-            return this.raspMod[ind];
+            return this._raspMod[ind];
         }
 
         getArr() {
-            return this.raspMod;
+            return this._raspMod;
         }
 
         addEventCopy(indeX) {
-            let newEvent = new RaspEvent;
-            let ind = this.raspMod.length;
-            newEvent.copyEvent(this.raspMod[indeX], ind);
-            this.raspMod.push(newEvent);
+            let newEvent = new RaspEvent();
+            let ind = this._raspMod.length;
+            newEvent.copyEvent(this._raspMod[indeX], ind);
+            this._raspMod.push(newEvent);
             return ind;
         }
 
         addEventNew() {
-            let ind = this.raspMod.length;
-            let newEvent = new RaspEvent;
-            this.raspMod.push(newEvent);
+            let ind = this._raspMod.length;
+            let newEvent = new RaspEvent();
+            this._raspMod.push(newEvent);
             return ind;
         }
 
         addEvent(indeX) {
-            let evnt = this.raspMod[indeX];
+            let evnt = this._raspMod[indeX];
             evnt.id = '';
-            this.raspMod.push(evnt);
+            this._raspMod.push(evnt);
             this.saveModel();
         }
 
         delEvent(num) {
             //this.saveModel();
-            //let idd = this.raspMod[num].id;
-            console.log(this.raspMod);
+            //let idd = this._raspMod[num].id;
+            console.log(this._raspMod);
             fetch('http://raspwp/wp-json/rasp/v1/raspdel', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'del', id: this.raspMod[num].id })
+                body: JSON.stringify({ action: 'del', id: this._raspMod[num].id })
             });
-            this.raspMod[num].killYourself();
-            this.raspMod.splice(num, 1);
+            this._raspMod[num].killYourself();
+            this._raspMod.splice(num, 1);
         }
 
         sortByDay() {
             this.sort_col = this.sortByDay;
-            this.raspMod.sort(function (a, b) {
+            this._raspMod.sort(function (a, b) {
                 if (a.event_day_of_week > b.event_day_of_week) {
                     return 1;
                 }
@@ -595,7 +611,7 @@
 
         sortByTime() {
             this.sort_col = this.sortByTime;
-            this.raspMod.sort(function (a, b) {
+            this._raspMod.sort(function (a, b) {
                 if (a.event_begin_time > b.event_begin_time) {
                     return 1;
                 }
@@ -620,7 +636,7 @@
 
         sortByName() {
             this.sort_col = this.sortByName;
-            this.raspMod.sort(function (a, b) {
+            this._raspMod.sort(function (a, b) {
                 if (a.event_name > b.event_name) {
                     return 1;
                 }
@@ -645,7 +661,7 @@
 
         sortByPlace() {
             this.sort_col = this.sortByPlace;
-            this.raspMod.sort(function (a, b) {
+            this._raspMod.sort(function (a, b) {
                 if (a.event_place > b.event_place) {
                     return 1;
                 }
@@ -676,7 +692,7 @@
 
         sortByShow() {
             this.sort_col = this.sortByShow;
-            this.raspMod.sort(function (a, b) {
+            this._raspMod.sort(function (a, b) {
                 if (parseInt(a.event_show) > parseInt(b.event_show)) {
                     return 1;
                 }
