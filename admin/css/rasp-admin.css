@@ -218,3 +218,8 @@
 #down-num{
   width: 4em;
 }
+
+.settings_wrapper{
+  border: solid 1px;
+  border-radius: 4px;
+}

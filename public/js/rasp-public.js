@@ -4,7 +4,8 @@
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 	/*------------------------------------------------------------------------------------------------*/
 	function rasp_ready() {
-
+		const settings = JSON.parse(document.getElementById("rasp_settings").innerHTML); 
+		console.log("settings", settings);
 		/* Getting data from PHP thrue DOM */
 		let events_list_array = []; //new Array();
 		let events_list = document.getElementsByClassName("event_data_element");
@@ -13,12 +14,7 @@
 		}
 		events_list = null;
 
-		const settings = JSON.parse(document.getElementById("rasp_settings").innerHTML); //document.getElementById
-		// for (let key in settings){
-		// 	console.log(key, ' - ',  settings[key]);
-		// }
 		const today = new Date();
-
 		//var today = new Date('20 nov 2019 19:00:00');
 		console.log("Sivodni " + today);
 		let current_moment = today.getDay() * 10000 + today.getHours() * 100 + today.getMinutes();
@@ -36,7 +32,7 @@
 
 		/*---------------------------------------------------------------------------------------------------*/
 		event_class_array.sort(arr_compare);
-		console.log(event_class_array);
+		//console.log(event_class_array);
 		/*sorting array by "event_begin_time_formated"*/
 		function arr_compare(a, b) {
 			if (a.BegTimeForm > b.BegTimeForm)
@@ -45,7 +41,6 @@
 				return -1;
 			return 0;
 		}
-
 		/*-----------------------------------------------------------------------------------------------------*/
 		let current_full_date = today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear();
 
@@ -88,7 +83,6 @@
 
 		$(".grid-container").css("grid-template-columns", grid_props);
 
-		//debugger;
 		//grid-template-columns: [day] 5em [time] 5em [name] auto [place] auto [description] auto;
 		console.log('grid_props --', grid_props);
 
@@ -97,12 +91,15 @@
 			$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayDate} </div>`);
 			$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayTime} </div>`);
 			if (settings.disp_name)
-				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayName} </div>`);
+				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayName(settings.disp_url)} </div>`);
 			if (settings.disp_place)
 				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayPlace} </div>`);
 			if (settings.disp_descr)
 				$(".grid-container").append(`<div class="grid-container-div"> ${event_class_array[i].DisplayDescription} </div>`);
 		}
+		$(".grid-container").css("background-color", settings.style_background);
+		$(".grid-container>div").css("background-color", settings.style_foreground);
+		$(".grid-container>div").css("color", settings.style_font);
 	}
 
 	class Event {
@@ -122,7 +119,7 @@
 
 					//calculated
 					e_now_date: todayDate,			// current (real) date 20.07.2019
-					e_calculated_date: null, //new Date(),    // shud be calculated for day of week of event that has been got from DB
+					e_calculated_date: null, 		//new Date(),    // shud be calculated for day of week of event that has been got from DB
 					e_begin_time_formated: 0,
 					e_current_time_formated: 0,
 					e_display_date: '',
@@ -188,8 +185,11 @@
 			return (this.event_data.e_begin_time.substr(0, 5));
 		}
 
-		get DisplayName() {
-			return `<a href = "${this.event_data.e_url}">${this.event_data.e_name}</a>`;
+		DisplayName(settings_url) {
+			if(settings_url)
+				return `<a href = "${this.event_data.e_url}">${this.event_data.e_name}</a>`;
+
+				return `${this.event_data.e_name}`;
 		}
 
 		get DisplayPlace() {

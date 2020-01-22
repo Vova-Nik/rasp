@@ -22,11 +22,11 @@
             this.raspView = new RaspView(this._raspModel, this);
         }
 
-        additInp() {
-            $('.addit_inp').on("change", function (element) {
-                console.log("additInp!!");
-            });
-        }
+        // additInp() {
+        //     $('.addit_inp').on("change", function (element) {
+        //         console.log("additInp!!");
+        //     });
+        //}
     }
 
     /***************************** End of main() ******************************************* */
@@ -44,6 +44,12 @@
             this.num_of_colls = 3;
             this.currentFormID = 0;	//num of event in table for form/ Set - in show form, use in save btn in form
             this.tick = this._tick.bind(this);
+            this.style_variant = 3;
+            // this.style_background = "#2196F3";
+            // this.style_font = "#000000";
+            // this.style_foreground = "#ffffff";
+            this.settings = this.rasp_model.rasp_settings;
+
         }
 
         transfer(val) {
@@ -169,50 +175,44 @@
 
             let ph = this.num_of_colls;
 
-            // let WayToShowSettings = settings.map(this.transfer);
-            //console.log('WayToShowSettings', WayToShowSettings);
-            // let WayToShowSettings map(settings, transfer)
-            // = {
-            //     addit_inp_name: 'checked',
-            //     addit_inp_place: 'checked',
-            //     addit_inp_desc: 'checked',
-            //     addit_inp_url: 'checked',
-            //     addit_inp_adaptive: 'checked',
-            //     addit_inp: 3,
-            // };
-            /*
-            disp_name: true
-            disp_place: false
-            disp_descr: false
-            disp_url: false
-            adaptive: true
-            num_of_rows: "5"
-            */
-
             let settings = this.rasp_model.rasp_settings;
+            // let bg=settings.
+            //  "style_background":"#8080ff","style_font":"#0000a0","style_foreground":"#d1d5fa"
 
             {
-            $(".aditional").append(
+                $(".aditional").append(
                     `
 			<div class="common-settings-form">
 				<div class="settings-form">
-						<p>Table. Way to show settings</p>
-						<div><input type="checkbox" class="addit_inp_name addit_check" ${this.transfer(settings.disp_name)}>Display Name</div>
-						<div><input type="checkbox" class="addit_inp_place addit_check" ${this.transfer(settings.disp_place)}>Display Place</div>
-						<div><input type="checkbox" class="addit_inp_desc addit_check" ${this.transfer(settings.disp_descr)}>Display Description</div>
-						<div><input type="checkbox" class="addit_inp_url addit_check" ${this.transfer(settings.disp_url)}>Display URL Link</div>
-					<div>
-								<input type="number" class="addit_inp " id="down-num" min="0" max="32"  value=${settings.num_of_rows } >
-								<label for="scales">Number of rows</label>
-					</div>
-					<div>
-								<input type="checkbox" class="addit_inp_adaptive addit_check"  name="Adaptive" ${this.transfer(settings.adaptive)}>
-								<label for="scales">Adaptive</label>
-					</div>
+                        <p>Table. Way to show settings</p>
+                        <div class="settings_wrapper">
+                            <div><input type="checkbox" class="addit_inp_name addit_check" ${this.transfer(settings.disp_name)}>Display Name</div>
+                            <div><input type="checkbox" class="addit_inp_place addit_check" ${this.transfer(settings.disp_place)}>Display Place</div>
+                            <div><input type="checkbox" class="addit_inp_desc addit_check" ${this.transfer(settings.disp_descr)}>Display Description</div>
+                            <div><input type="checkbox" class="addit_inp_url addit_check" ${this.transfer(settings.disp_url)}>Display URL Link</div>
+                        </div>
+                        <div class="settings_wrapper">
+                                        <div><input type="color" id="background" name="background" value=${settings.style_background}>
+                                             <label for="background">Background</label></div>
+                                        <div><input type="color" id="foreground" name="foreground" value=${settings.style_foreground}>
+                                             <label for="foreground">Foreground</label></div>
+                                        <div><input type="color" id="font" name="font" value=${settings.style_font}>
+                                                <label for="font">Font</label></div>
+                        </div>
+                        <div class="settings_wrapper">
+                            <div>
+                                        <input type="number" class="addit_inp " id="down-num" min="0" max="32"  value=${settings.num_of_rows} >
+                                        <label for="scales">Number of rows</label>
+                            </div>
+                            <div>
+                                        <input type="checkbox" class="addit_inp_adaptive addit_check"  name="Adaptive" ${this.transfer(settings.adaptive)}>
+                                        <label for="scales">Adaptive</label>
+                            </div>
+                    </div>
 					<div  class="form_act_button btn_save_settings">Save</div>
 		  		</div>
 					<div class="file-oper-form">
-							<p>Local .csv file</p>
+							<p>rasp_data.csv</p>
 							<div  class="form_act_button btn_save_file">Save to File</div>
 							<div  class="form_act_button btn_load">Load from File</div>
 							<div  class="form_act_button btn_download">Download</div>
@@ -224,12 +224,25 @@
             }
 
             $(".common-settings-form input").on("change", (event) => {
-                console.log("common-settings-form input");
-
+                //console.log("common-settings-form input");
             });
 
             // debugger;
             let cont = this;
+
+            // $("#background").on("change", (event) => {
+            //     //console.log(event.target);
+            //     cont.style_background = event.target.value;
+            // }).bind(cont);
+
+            // $("#foreground").on("change", (event) => {
+            //     cont.style_foreground = event.target.value;
+            // }).bind(cont);
+
+            // $("#font").on("change", (event) => {
+            //     cont.style_font = event.target.value;
+            // }).bind(cont);
+
             $(".form_act_button").on("click", function (event) {
                 let settings = {}; //cont.rasp_model.rasp_settings;
                 settings.disp_name = $(".addit_inp_name").prop("checked");
@@ -238,12 +251,23 @@
                 settings.disp_url = $(".addit_inp_url").prop("checked");
                 settings.adaptive = $(".addit_inp_adaptive").prop("checked");
                 settings.num_of_rows = $("#down-num").prop("value");
+                //debugger;
 
-                // let tt = JSON.stringify(cont.rasp_model.rasp_settings);
-                console.log('form_act_button on click', settings);
+                settings.style_background = $("#background").prop("value");
+                settings.style_foreground = $("#foreground").prop("value");
+                settings.style_font = $("#font").prop("value");
+
+            //    console.log("bg - ", $("#background").prop("value"));
+            //    console.log("fg - ", $("#foreground").prop("value"));
+            //    console.log("bfont - ", $("#font").prop("value"));
+            //    console.log('form_act_button on click', settings);
+
                 cont.rasp_model.saveSettings(settings);
 
             }).bind(cont);
+
+
+
 
             $(".file-oper-form").on("click", function (element) {
                 // console.log("fileBtn in RaspController!!");
@@ -430,7 +454,11 @@
             this._raspMod = [];
             this.srv_ans = 0;
             this.request_for_server = 'save'; //read, write - for txt, save load for .csv
-            this.rasp_settings = {};
+            this.rasp_settings = {
+                style_background: "#2196F3",
+                style_foreground: "#ffffff",
+                style_font: "#000000",
+            };
         }
 
         async init() {
@@ -457,21 +485,16 @@
                 body: JSON.stringify({ action: 'load_settings' })
             });
             let settings = await response.json();
-            // debugger;
             settings = JSON.parse(settings.option_value);
-
-            // this.rasp_settings = JSON.parse(settings);
             this.rasp_settings = settings;
-
 
             console.log('init model loadSettings settings = ', this.rasp_settings);
             for (let key in this.rasp_settings)
                 console.log(key, this.rasp_settings[key]);
 
-            this.num_of_rows = 3;
-            this.adaptive = false;
+            // this.num_of_rows = 3;
+            // this.adaptive = false;
             this.sort_col = this.sortByDay;
-
             this._rasp_controller.runRaspWiev();
         }
 
@@ -520,18 +543,19 @@
                 body: req_body
             });
         }
-
         saveSettings(settings) {
-
+            console.log("saveSettings ", settings);
             this.rasp_settings = settings;
             this.srv_ans = fetch('/wp-json/rasp/v1/raspSettings', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'save_settings',
+
                     settings: JSON.stringify(this.rasp_settings)
                 }),
             });
+
             //console.log("set-------------", JSON.stringify(this.rasp_settings));
         }
 

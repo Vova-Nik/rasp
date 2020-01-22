@@ -212,18 +212,15 @@ function rasp_restAPI_point_file(WP_REST_Request $request)
 
 function rasp_restAPI_point_settings(WP_REST_Request $request)
 {
-   $action = $request['action'];
-   error_log('rasp_restAPI_point_settings!!! action = ' .$action); 
-   $settings = $request['settings'];
-   //error_log('rasp_restAPI_point_settings!!!  ' .$rBody);  //$request['settings']);
-   myLog($settings);
+    $action = $request['action'];
+    $settings = $request['settings'];
+    myLog($settings);
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'options';
     $charset_collate = $wpdb->get_charset_collate();
 
-    if ($action == 'save_settings'){
-
+    if ($action == 'save_settings') {
         $wpdb->update(
             $table_name,
             array(
@@ -236,36 +233,35 @@ function rasp_restAPI_point_settings(WP_REST_Request $request)
         return;
     }
 
-    if ($action == 'load_settings'){
+    if ($action == 'load_settings') {
         $results = $wpdb->get_results("SELECT * FROM $table_name WHERE option_name ='rasp_plugin_data'");
-        myLog($results[0]);
-    }
+        error_log("rasp admin display read from DB" . (string) json_encode($results[0]));
     return $results[0];
+    }
 }
 
-function myLog($toLog){
 
-   $type =  gettype ($toLog);
-    if($type == "string" ){
-        error_log('myLog. type = String ' .$toLog);
+function myLog($toLog)
+{
+    $type = gettype($toLog);
+    if ($type == "string. ") {
+        error_log('myLog. type = String ' . $toLog);
         return;
     }
-
-    if($type == "array" ){
-        error_log('myLog. type = Array ' .json_encode($toLog));
-        error_log('Array length = ' .count($toLog));
-        foreach((array)$toLog as $key => $item){
-            error_log($key .' -- ' .$item);
+    if ($type == "array. ") {
+        error_log('myLog. type = Array ' . json_encode($toLog));
+        error_log('Array length = ' . count($toLog));
+        foreach ((array) $toLog as $key => $item) {
+            error_log($key . ' -- ' . $item);
         }
         return;
     }
-
-    if($type == "object" ){
+    if ($type == "object. ") {
         error_log('myLog. type = object ');
-        foreach($toLog as $key => $item)
-        error_log($key .' -- ' .$item);
+        foreach ($toLog as $key => $item) {
+            error_log($key . ' -- ' . $item);
+        }
         return;
     }
-
-    error_log('Other type ' .$toLog);
+    error_log('Other type ' . $toLog);
 }

@@ -41,6 +41,7 @@ class Display
             $table_name = $wpdb->prefix . 'options';
             $charset_collate = $wpdb->get_charset_collate();
             $settings = $wpdb->get_results("SELECT * FROM $table_name WHERE option_name ='rasp_plugin_data'")[0];
+            error_log("rasp public display read" . (string) json_encode($settings));
 
             //JSON_UNESCAPED_SLASHES ( integer ) Не экранировать /. Доступно с PHP 5.4.0.
             //JSON_HEX_TAG ( integer ) Все < и > кодируются в \u003C и \u003E. Доступно с PHP 5.3.0.
