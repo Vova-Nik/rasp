@@ -3,13 +3,11 @@
 
     document.addEventListener("DOMContentLoaded", main);
 
-    /***************************** RaspController ****************************************** */
-
-
     function main() {
         let raspController = new RaspController();
     }
-
+    
+    /***************************** RaspController ****************************************** */
     class RaspController {
 
         constructor() {
@@ -17,7 +15,7 @@
             this._raspModel.init();
         }
 
-        /******************* calback runs when all data came frov server ****************** */
+        /******************* calback. Runs when all data came frov server ****************** */
         runRaspWiev() {
             this.raspView = new RaspView(this._raspModel, this);
         }
@@ -45,9 +43,6 @@
             this.currentFormID = 0;	//num of event in table for form/ Set - in show form, use in save btn in form
             this.tick = this._tick.bind(this);
             this.style_variant = 3;
-            // this.style_background = "#2196F3";
-            // this.style_font = "#000000";
-            // this.style_foreground = "#ffffff";
             this.settings = this.rasp_model.rasp_settings;
 
         }
@@ -64,7 +59,6 @@
             $(".admin-grid-container >* ").remove();
             $(".down-form").remove();
             $(".common-settings-form").remove();
-            //console.log("View updated", this.rasp_model.getArr());
             const adminGridContainer = $(".admin-grid-container");
             //	$(".admin-grid-container").append(`
 
@@ -132,15 +126,6 @@
             });
 
             adminGridContainer.append(`<div class="admin-grid-container-div-btn new-btn">New</div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div-blank"></div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div"> </div>`);
-            adminGridContainer.append(`<div class="admin-grid-container-div-blank"></div>`);
 
             const th = this;
             $(`.edit-btn`).on("click", function (event) {
@@ -173,25 +158,23 @@
                 th.showForm(ind);
             }.bind(th));
 
-            let ph = this.num_of_colls;
-
             let settings = this.rasp_model.rasp_settings;
-            // let bg=settings.
-            //  "style_background":"#8080ff","style_font":"#0000a0","style_foreground":"#d1d5fa"
 
             {
                 $(".aditional").append(
                     `
+
 			<div class="common-settings-form">
-				<div class="settings-form">
-                        <p>Table. Way to show settings</p>
-                        <div class="settings_wrapper">
+                        <div class="head1">Table. Way to show settings</div>
+
+                        <div class="">
                             <div><input type="checkbox" class="addit_inp_name addit_check" ${this.transfer(settings.disp_name)}>Display Name</div>
                             <div><input type="checkbox" class="addit_inp_place addit_check" ${this.transfer(settings.disp_place)}>Display Place</div>
                             <div><input type="checkbox" class="addit_inp_desc addit_check" ${this.transfer(settings.disp_descr)}>Display Description</div>
                             <div><input type="checkbox" class="addit_inp_url addit_check" ${this.transfer(settings.disp_url)}>Display URL Link</div>
                         </div>
-                        <div class="settings_wrapper">
+
+                        <div class="">
                                         <div><input type="color" id="background" name="background" value=${settings.style_background}>
                                              <label for="background">Background</label></div>
                                         <div><input type="color" id="foreground" name="foreground" value=${settings.style_foreground}>
@@ -199,7 +182,8 @@
                                         <div><input type="color" id="font" name="font" value=${settings.style_font}>
                                                 <label for="font">Font</label></div>
                         </div>
-                        <div class="settings_wrapper">
+
+                        <div class="">
                             <div>
                                         <input type="number" class="addit_inp " id="down-num" min="0" max="32"  value=${settings.num_of_rows} >
                                         <label for="scales">Number of rows</label>
@@ -208,9 +192,18 @@
                                         <input type="checkbox" class="addit_inp_adaptive addit_check"  name="Adaptive" ${this.transfer(settings.adaptive)}>
                                         <label for="scales">Adaptive</label>
                             </div>
-                    </div>
-					<div  class="form_act_button btn_save_settings">Save</div>
-		  		</div>
+                        </div>
+                        <div class="">
+                        fffffffffffff
+                        </div>
+
+                        <div  class="settings-save-button settings-button">Save</div>
+
+                        </div>
+     
+
+
+
 					<div class="file-oper-form">
 							<p>rasp_data.csv</p>
 							<div  class="form_act_button btn_save_file">Save to File</div>
@@ -219,17 +212,15 @@
 							<input id="inp-file" name="myCsvFile" type="file">
 							<label class="form_act_button btn_upload" for="inp-file">Upload</label>
 					</div>
-				</div>
+                </div>
+
             `);
             }
 
             $(".common-settings-form input").on("change", (event) => {
                 //console.log("common-settings-form input");
             });
-
-            // debugger;
-            let cont = this;
-
+           {// let cont = this;
             // $("#background").on("change", (event) => {
             //     //console.log(event.target);
             //     cont.style_background = event.target.value;
@@ -242,8 +233,9 @@
             // $("#font").on("change", (event) => {
             //     cont.style_font = event.target.value;
             // }).bind(cont);
+        }
 
-            $(".form_act_button").on("click", function (event) {
+            $(".settings-save-button").on("click", function (event) {
                 let settings = {}; //cont.rasp_model.rasp_settings;
                 settings.disp_name = $(".addit_inp_name").prop("checked");
                 settings.disp_place = $(".addit_inp_place").prop("checked");
@@ -251,23 +243,13 @@
                 settings.disp_url = $(".addit_inp_url").prop("checked");
                 settings.adaptive = $(".addit_inp_adaptive").prop("checked");
                 settings.num_of_rows = $("#down-num").prop("value");
-                //debugger;
 
                 settings.style_background = $("#background").prop("value");
                 settings.style_foreground = $("#foreground").prop("value");
                 settings.style_font = $("#font").prop("value");
+                th.rasp_model.saveSettings(settings);
 
-            //    console.log("bg - ", $("#background").prop("value"));
-            //    console.log("fg - ", $("#foreground").prop("value"));
-            //    console.log("bfont - ", $("#font").prop("value"));
-            //    console.log('form_act_button on click', settings);
-
-                cont.rasp_model.saveSettings(settings);
-
-            }).bind(cont);
-
-
-
+            }).bind(th);
 
             $(".file-oper-form").on("click", function (element) {
                 // console.log("fileBtn in RaspController!!");

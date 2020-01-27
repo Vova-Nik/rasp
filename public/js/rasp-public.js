@@ -150,8 +150,6 @@
 
 		dayOffset(ftRasp, ftNow) {
 			let offs = ftRasp - ftNow;
-			// let ftr = ftRasp/10000 | 0;
-			// let ftn = ftNow/10000 | 0;
 			let fto = (ftRasp / 10000 | 0) - (ftNow / 10000 | 0);
 			if (fto > 0)
 				return fto;
