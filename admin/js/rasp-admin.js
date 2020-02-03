@@ -208,12 +208,12 @@
 
                                 <div class="settings-form">
                                     <div>
-                                                <input type="number" class="addit_inp " id="font-num" min="8" max="32"  value=${settings.font_size} >
+                                                <input type="number" class="addit_inp" id="font-num" min="8" max="32"  value=${settings.font_size} >
                                                 <label for="scales">Font size</label>
                                     </div>
                                     <div>
-                                                <input type="checkbox" class="addit_inp_adaptive addit_bold"  name="Bold" ${this.transfer(settings.bold)}>
-                                                <label for="scales">Bold</label>
+                                                <input type="number" class="addit_inp" id="font_weight" min="100" max="900" step="100" value="200">
+                                                <label for="scales">Font weight</label>
                                     </div>
                                     <div>
                                             <input type="checkbox" class="addit_inp_adaptive addit_rh"  name="Rh" ${this.transfer(settings.rh )}>
@@ -242,6 +242,7 @@
 
             `);
             }
+           // ${settings.font_weight}
 
             $(".common-settings-form input").on("change", (event) => {
                 //console.log("common-settings-form input");
@@ -275,7 +276,7 @@
                 settings.style_font = $("#font").prop("value");
 
                 settings.font_size = $("#font-num").prop("value");
-                settings.bold = $(".addit_bold").prop("checked");
+                settings.font_weight = $("#font_weight").prop("value");
                 settings.rh = $(".addit_rh").prop("checked");
 
 
