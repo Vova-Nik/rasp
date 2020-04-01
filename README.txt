@@ -1,6 +1,7 @@
 === Plugin Name ===
 Contributors: (this should be a list of wordpress.org userid's)
 Donate link: https://www.facebook.com/vnikols
+deploed: http://www.aa-odessa.ho.ua/rasp-plugin-demo-page
 Tags: comments, spam
 Requires at least: 3.0.1
 Tested up to: 3.4
