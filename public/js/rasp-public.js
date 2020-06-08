@@ -4,9 +4,37 @@
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 	/*------------------------------------------------------------------------------------------------*/
 	function rasp_ready() {
-		const settings = JSON.parse(document.getElementById("rasp_settings").innerHTML); 
+		//const settings = JSON.parse(document.getElementById("rasp_settings").innerHTML);
+		//console.log("settings", settings);
+
+
+		let settings = {};
+		let sets = document.getElementById("rasp_settings").innerHTML;
+		//sets = "{" + sets + "}";
+		console.log("setts ", sets);
+
+		try {
+			settings = JSON.parse(sets);
+		}
+		catch{
+			console.log("settings parsing error", settings);
+			settings = {
+				disp_name: true,
+				disp_place: true,
+				disp_descr: true,
+				disp_url: true,
+				adaptive: true,
+				num_of_rows: "3",
+				style_background: "#f0f0f0",
+				style_foreground: "#ffffff",
+				style_font: "#000000",
+			};
+		}
 		console.log("settings", settings);
-		/* Getting data from PHP thrue DOM */
+
+
+
+		/* Getting data from PHP thru the DOM */
 		let events_list_array = []; //new Array();
 		let events_list = document.getElementsByClassName("event_data_element");
 		for (let i = 0; i < events_list.length; i++) {
@@ -112,7 +140,6 @@
 					e_description: event.event_description,
 					e_name: event.event_name,
 					e_place: event.event_place,
-					e_description: event.event_description,
 					e_url: event.event_url,
 					e_id: event.id,
 					e_show: event.event_show,
