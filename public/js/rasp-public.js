@@ -4,14 +4,13 @@
 	document.addEventListener("DOMContentLoaded", rasp_ready);
 	/*------------------------------------------------------------------------------------------------*/
 	function rasp_ready() {
-		//const settings = JSON.parse(document.getElementById("rasp_settings").innerHTML);
-		//console.log("settings", settings);
 
+		//return;
 
 		let settings = {};
 		let sets = document.getElementById("rasp_settings").innerHTML;
-		//sets = "{" + sets + "}";
-		console.log("setts ", sets);
+		sets = "{" + sets + "}";
+		 console.log("setts ", sets);
 
 		try {
 			settings = JSON.parse(sets);
@@ -24,8 +23,8 @@
 				disp_descr: true,
 				disp_url: true,
 				adaptive: true,
-				num_of_rows: "3",
-				style_background: "#f0f0f0",
+				num_of_rows: "5",
+				style_background: "#e0e0f0",
 				style_foreground: "#ffffff",
 				style_font: "#000000",
 			};
