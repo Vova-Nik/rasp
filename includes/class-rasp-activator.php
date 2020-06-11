@@ -141,13 +141,23 @@ class Rasp_Activator
 			$wpdb->insert(
     			$table_name,
     			array(
-    				'option_name' => 'rasp_plugin_data',   //s
-    				'option_value' => "\"disp_name\":true,\"disp_place\":true,\"disp_descr\":true,\"disp_url\":true,\"adaptive\":true,\"num_of_rows\":\"3\"",	//s
-    				'autoload' => 'no', //s
+    				'option_name' => 'rasp_plugin_data',
+    				'option_value' => "
+    				\"disp_name\":true,
+    				\"disp_place\":true,
+    				\"disp_descr\":true,
+    				\"disp_url\":true,
+    				\"adaptive\":true,
+    				\"num_of_rows\":\"3\",
+    				\"style_background\": \"#e0e0f0\",
+                    \"style_foreground\": \"#ffffff\",
+                    \"style_font\": \"#000000\"
+    				",
+    				'autoload' => 'no',
     			),
     			array('%s', '%s', '%s')
 			);
-			error_log('rasp_plugin_data rasp-activator');
+			//error_log('rasp_plugin_data rasp-activator');
 
     	}
 

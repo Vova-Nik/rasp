@@ -27,12 +27,6 @@
             this.raspView.updateView();
 
         }
-
-        // additInp() {
-        //     $('.addit_inp').on("change", function (element) {
-        //         console.log("additInp!!");
-        //     });
-        //}
     }
 
     /***************************** End of main() ******************************************* */
@@ -498,7 +492,7 @@
                 body: JSON.stringify({ action: 'load_settings' })
             });
             let settings = await response.json();
-            settings = JSON.parse(settings.option_value);
+            settings = JSON.parse('{' + settings.option_value + '}');
             this.rasp_settings = settings;
             this.sort_col = this.sortByDay;
             this._rasp_controller.runRaspWiev();

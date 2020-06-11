@@ -234,9 +234,32 @@ function rasp_restAPI_point_settings(WP_REST_Request $request)
     }
 
     if ($action == 'load_settings') {
-        $results = $wpdb->get_results("SELECT * FROM $table_name WHERE option_name ='rasp_plugin_data'");
-        error_log("rasp admin display read from DB" . (string) json_encode($results[0]));
-    return $results[0];
+        $settings = new stdClass();
+        $set = $wpdb->get_results("SELECT * FROM $table_name WHERE option_name ='rasp_plugin_data'");
+         if(sizeof($set)>0){
+                                 $settings = $set[0];
+                                 $settings->src = "db_normal";
+                             }
+                        else{
+                             $settings->option_id = "default";
+                             $settings->option_name = "rasp_plugin_data";
+                             $settings->src = "db_null";
+                             $settings->option_value = "
+                             \"disp_name\":true,
+                             \"disp_place\":true,
+                             \"disp_descr\":true,
+                             \"disp_url\":true,
+                             \"adaptive\":true,
+                             \"num_of_rows\":\"3\",
+                 			 \"style_background\": \"#e0e0f0\",
+                             \"style_foreground\": \"#ffffff\",
+                             \"style_font\": \"#000000\"
+                             " ;
+                          }
+
+          error_log("rasp admin display read from DB" . (string) json_encode($set[0]));
+
+    return $set[0];
     }
 }
 
