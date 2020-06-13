@@ -25,7 +25,6 @@
             this._raspModel = new RaspModel(this); //RaspModel
             this._raspModel.init();
             this.raspView.updateView();
-
         }
     }
 
@@ -492,8 +491,25 @@
                 body: JSON.stringify({ action: 'load_settings' })
             });
             let settings = await response.json();
-            settings = JSON.parse('{' + settings.option_value + '}');
-            this.rasp_settings = settings;
+            try {
+                settings = JSON.parse("2333" + settings.option_value);
+            }
+            catch{
+                    console.log("Settings parsing error. Defaults loaded.", settings);
+                    settings = {
+                        disp_name: true,
+                        disp_place: true,
+                        disp_descr: true,
+                        disp_url: true,
+                        adaptive: true,
+                        num_of_rows: "5",
+                        style_background: "#e0e0f0",
+                        style_foreground: "#ffffff",
+                        style_font: "#000000",
+                    };
+            }
+
+            //this.rasp_settings = settings;
             this.sort_col = this.sortByDay;
             this._rasp_controller.runRaspWiev();
         }
