@@ -613,7 +613,7 @@
             //this.saveModel();
             //let idd = this._raspMod[num].id;
             console.log(this._raspMod);
-            fetch('http://raspwp/wp-json/rasp/v1/raspdel', {
+            fetch('/wp-json/rasp/v1/raspdel', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'del', id: this._raspMod[num].id })
